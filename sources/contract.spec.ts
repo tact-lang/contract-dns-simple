@@ -23,7 +23,7 @@ describe("contract", () => {
     `);
 
     // Burn fuses
-    await contract.send(owner, { value: toNano(1) }, "burn canAdd");
+    await contract.send(owner, { value: toNano(1) }, "Burn canAdd");
     await system.run();
     expect(await contract.getPermissions()).toMatchInlineSnapshot(`
       {
@@ -34,7 +34,7 @@ describe("contract", () => {
       }
     `);
 
-    await contract.send(owner, { value: toNano(1) }, "burn canRemove");
+    await contract.send(owner, { value: toNano(1) }, "Burn canRemove");
     await system.run();
     expect(await contract.getPermissions()).toMatchInlineSnapshot(`
       {
@@ -45,7 +45,7 @@ describe("contract", () => {
       }
     `);
 
-    await contract.send(owner, { value: toNano(1) }, "burn canReplace");
+    await contract.send(owner, { value: toNano(1) }, "Burn canReplace");
     await system.run();
     expect(await contract.getPermissions()).toMatchInlineSnapshot(`
       {

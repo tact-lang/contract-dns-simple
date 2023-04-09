@@ -410,6 +410,53 @@ function dictValueParserUpdateRecord(): DictionaryValue<UpdateRecord> {
     }
 }
 
+export type UpdateSubdomain = {
+    $$type: 'UpdateSubdomain';
+    domain: string;
+    address: Address | null;
+}
+
+export function storeUpdateSubdomain(src: UpdateSubdomain) {
+    return (builder: Builder) => {
+        let b_0 = builder;
+        b_0.storeUint(1547073789, 32);
+        b_0.storeStringRefTail(src.domain);
+        b_0.storeAddress(src.address);
+    };
+}
+
+export function loadUpdateSubdomain(slice: Slice) {
+    let sc_0 = slice;
+    if (sc_0.loadUint(32) !== 1547073789) { throw Error('Invalid prefix'); }
+    let _domain = sc_0.loadStringRefTail();
+    let _address = sc_0.loadMaybeAddress();
+    return { $$type: 'UpdateSubdomain' as const, domain: _domain, address: _address };
+}
+
+function loadTupleUpdateSubdomain(source: TupleReader) {
+    let _domain = source.readString();
+    let _address = source.readAddressOpt();
+    return { $$type: 'UpdateSubdomain' as const, domain: _domain, address: _address };
+}
+
+function storeTupleUpdateSubdomain(source: UpdateSubdomain) {
+    let builder = new TupleBuilder();
+    builder.writeString(source.domain);
+    builder.writeAddress(source.address);
+    return builder.build();
+}
+
+function dictValueParserUpdateSubdomain(): DictionaryValue<UpdateSubdomain> {
+    return {
+        serialize: (src, buidler) => {
+            buidler.storeRef(beginCell().store(storeUpdateSubdomain(src)).endCell());
+        },
+        parse: (src) => {
+            return loadUpdateSubdomain(src.loadRef().beginParse());
+        }
+    }
+}
+
 export type EventPermissionsUpdated = {
     $$type: 'EventPermissionsUpdated';
     permissions: Permissions;
@@ -608,6 +655,147 @@ function dictValueParserEventRecordRemoved(): DictionaryValue<EventRecordRemoved
     }
 }
 
+export type EventSubdomainAdded = {
+    $$type: 'EventSubdomainAdded';
+    domain: string;
+    address: Address;
+}
+
+export function storeEventSubdomainAdded(src: EventSubdomainAdded) {
+    return (builder: Builder) => {
+        let b_0 = builder;
+        b_0.storeUint(4279974676, 32);
+        b_0.storeStringRefTail(src.domain);
+        b_0.storeAddress(src.address);
+    };
+}
+
+export function loadEventSubdomainAdded(slice: Slice) {
+    let sc_0 = slice;
+    if (sc_0.loadUint(32) !== 4279974676) { throw Error('Invalid prefix'); }
+    let _domain = sc_0.loadStringRefTail();
+    let _address = sc_0.loadAddress();
+    return { $$type: 'EventSubdomainAdded' as const, domain: _domain, address: _address };
+}
+
+function loadTupleEventSubdomainAdded(source: TupleReader) {
+    let _domain = source.readString();
+    let _address = source.readAddress();
+    return { $$type: 'EventSubdomainAdded' as const, domain: _domain, address: _address };
+}
+
+function storeTupleEventSubdomainAdded(source: EventSubdomainAdded) {
+    let builder = new TupleBuilder();
+    builder.writeString(source.domain);
+    builder.writeAddress(source.address);
+    return builder.build();
+}
+
+function dictValueParserEventSubdomainAdded(): DictionaryValue<EventSubdomainAdded> {
+    return {
+        serialize: (src, buidler) => {
+            buidler.storeRef(beginCell().store(storeEventSubdomainAdded(src)).endCell());
+        },
+        parse: (src) => {
+            return loadEventSubdomainAdded(src.loadRef().beginParse());
+        }
+    }
+}
+
+export type EventSubdomainRemoved = {
+    $$type: 'EventSubdomainRemoved';
+    domain: string;
+}
+
+export function storeEventSubdomainRemoved(src: EventSubdomainRemoved) {
+    return (builder: Builder) => {
+        let b_0 = builder;
+        b_0.storeUint(3052516533, 32);
+        b_0.storeStringRefTail(src.domain);
+    };
+}
+
+export function loadEventSubdomainRemoved(slice: Slice) {
+    let sc_0 = slice;
+    if (sc_0.loadUint(32) !== 3052516533) { throw Error('Invalid prefix'); }
+    let _domain = sc_0.loadStringRefTail();
+    return { $$type: 'EventSubdomainRemoved' as const, domain: _domain };
+}
+
+function loadTupleEventSubdomainRemoved(source: TupleReader) {
+    let _domain = source.readString();
+    return { $$type: 'EventSubdomainRemoved' as const, domain: _domain };
+}
+
+function storeTupleEventSubdomainRemoved(source: EventSubdomainRemoved) {
+    let builder = new TupleBuilder();
+    builder.writeString(source.domain);
+    return builder.build();
+}
+
+function dictValueParserEventSubdomainRemoved(): DictionaryValue<EventSubdomainRemoved> {
+    return {
+        serialize: (src, buidler) => {
+            buidler.storeRef(beginCell().store(storeEventSubdomainRemoved(src)).endCell());
+        },
+        parse: (src) => {
+            return loadEventSubdomainRemoved(src.loadRef().beginParse());
+        }
+    }
+}
+
+export type EventSubdomainUpdated = {
+    $$type: 'EventSubdomainUpdated';
+    domain: string;
+    oldAddress: Address;
+    newAddress: Address;
+}
+
+export function storeEventSubdomainUpdated(src: EventSubdomainUpdated) {
+    return (builder: Builder) => {
+        let b_0 = builder;
+        b_0.storeUint(2877063357, 32);
+        b_0.storeStringRefTail(src.domain);
+        b_0.storeAddress(src.oldAddress);
+        b_0.storeAddress(src.newAddress);
+    };
+}
+
+export function loadEventSubdomainUpdated(slice: Slice) {
+    let sc_0 = slice;
+    if (sc_0.loadUint(32) !== 2877063357) { throw Error('Invalid prefix'); }
+    let _domain = sc_0.loadStringRefTail();
+    let _oldAddress = sc_0.loadAddress();
+    let _newAddress = sc_0.loadAddress();
+    return { $$type: 'EventSubdomainUpdated' as const, domain: _domain, oldAddress: _oldAddress, newAddress: _newAddress };
+}
+
+function loadTupleEventSubdomainUpdated(source: TupleReader) {
+    let _domain = source.readString();
+    let _oldAddress = source.readAddress();
+    let _newAddress = source.readAddress();
+    return { $$type: 'EventSubdomainUpdated' as const, domain: _domain, oldAddress: _oldAddress, newAddress: _newAddress };
+}
+
+function storeTupleEventSubdomainUpdated(source: EventSubdomainUpdated) {
+    let builder = new TupleBuilder();
+    builder.writeString(source.domain);
+    builder.writeAddress(source.oldAddress);
+    builder.writeAddress(source.newAddress);
+    return builder.build();
+}
+
+function dictValueParserEventSubdomainUpdated(): DictionaryValue<EventSubdomainUpdated> {
+    return {
+        serialize: (src, buidler) => {
+            buidler.storeRef(beginCell().store(storeEventSubdomainUpdated(src)).endCell());
+        },
+        parse: (src) => {
+            return loadEventSubdomainUpdated(src.loadRef().beginParse());
+        }
+    }
+}
+
 export type DNSRecord = {
     $$type: 'DNSRecord';
     name: string;
@@ -716,8 +904,8 @@ function initSimpleDNSContract_init_args(src: SimpleDNSContract_init_args) {
 }
 
 async function SimpleDNSContract_init(owner: Address) {
-    const __code = Cell.fromBase64('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');
-    const __system = Cell.fromBase64('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');
+    const __code = Cell.fromBase64('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');
+    const __system = Cell.fromBase64('te6cckECQQEADc8AAQHAAQEFoMr/AgEU/wD0pBP0vPLICwMCAWIaBAIBIBUFAgEgEQYCASAOBwIVtGGbZ4qiu2eNjFA/CAFUcCLXCwfAAJcwAdMHMQF43oFeYSPwTPL0VXDbPAigUAcQZxBWEEUQNBAjCQTeIddJwACOplR3ZVR3ZQfXSRB9EGwQWxBKEDlIAHBQDds8bGIQVxBGEDUQJBAj4CHbPIEBASH5ASVZWfQMb6GSMG3fIG6zjowzMddJASBu8tCA2zzgW1R3ZVR3ZSfXSQj5ARCOEH0QbBBbEEoQOU4NDQwLCgEY2zxsYhBXEEYQNRAkDQBQyIIAupMByw8BINdJgQELuvLgiCDXCwoggQT/uvLQiYMJuvLgiM8WyQEMINs81xgwOwBygQEBVEUTWfQNb6GSMG3fIG6SMG2c0NQB0AH0BFlsEm8C4iBukltt4CHAAGwSmCBu8tCAbyIx4DBtAgEgEA8AdbJu40NWlwZnM6Ly9RbU5oTjl6cHN1MkszZFdLV0JlcEo2cTJReGRXaHFYRlI5WXdtVllBbW0xTjRSggABGwr7tRNDSAAGACAecUEgIQqdvbPNs8bGE/EwACIQDcq9GCcFzsPV0srnsehOw51kqFG2aCcJ3WNS0rZHyzItOvLf3xYjmCcCBVwBuAZ2OUzlg6rkclssOCcJ2XTlqzTstzOg6WbZRm6KSCcKAWPdCZRLm1qqkKwpYALAaCcEDOdWnnFfnSULAdYW4mR7ICASAYFgIRuFHds82zxsYYPxcAAiUCEbn0XbPNs8bGOD8ZAAZUdDICAskeGwEDsZAcAfbtou37INdKwwCSMHDgINdJIKk4AsMAkltw4CDAAJJbf+CrAnB/cAOOTgPTByHAAI4TMTPAAJRbcNsx4JQwcNsx4HBwf44vMyDALSHCLyLBOrBSELEiwmADwXsTsBKxs5VfBHDbMeBSBLCVXwNw2zHgcAGkQDPiEuQwMnAdAAgBs7C6Au/YB0NMDAXGwowH6QAEg10mBAQu68uCIINcLCiCBBP+68tCJgwm68uCIVFBTA28E+GEC+GLbPFUV2zwwyPhDAcx/AcoAVVBQZSDXSYEBC7ry4Igg1wsKIIEE/7ry0ImDCbry4IjPFlUgUCPKAMoAygAS9AD0AMntVI/HwTy7aLt+3Ah10nCH5UwINcLH94Cklt/4CGCEFw2eP26jsMx0x8BghBcNnj9uvLggdQB0AH6QCHXCwHDAI4dASDXSYEBC7ry4Igg1wsKIIEE/7ry0ImDCbry4IiSMW3iEmwS2zx/4CGCENKUtya64wIhghCUapi2uuMCITEnJiACjoIQD0dNA7qOtTHTHwGCEA9HTQO68uCB+kABINdJgQELuvLgiCDXCwoggQT/uvLQiYMJuvLgiDFVUNs8bBV/4AHAAJEw4w1wPiEEyPkBIILwmGwroSS7kofrSgvY0xBOHABno8k5UtiJx00IGFvTDU26j5cw2zyBY+Ek8vRw+EJwgwaIbW3bPH/bMeAggvDSAFy0G/7YP44Ty8K5et1x5UirERDK43eXFLoExpv+Gbo+JTgiBP6P2TDbPIFnRlAF8vRwVHAyyFUgghBs1ZvmUATLHwNQI8oAygDKAMnIgljAAAAAAAAAAAAAAAABActnzMlw+wCIFYIQO5rKAHD7An/4QnBYA4EAggFtbds8f9sx4CCC8DnvUfdKnFYG9smCA2Vn1Q9UbvPcvfcvhr9zjSFn9J9uPjo4IwT+uo/ZMNs8gWdGUATy9HBUdALIVSCCEGzVm+ZQBMsfA1AjygDKAMoAyciCWMAAAAAAAAAAAAAAAAEBy2fMyXD7AIgUghA7msoAcPsCf/hCcFgDgQCCAW1t2zx/2zHggvCtpiwNfQ+lYkaONDjcU73DDKwm4eld3EQIu0vuoGZfxD46OCQDuLqP2Ns8gWdGUAPy9HBUdDDIVSCCEGzVm+ZQBMsfA1AjygDKAMoAyciCWMAAAAAAAAAAAAAAAAEBy2fMyXD7AIgTghA7msoAcPsCf/hCcFgDgQCCAW1t2zx/2zHgPjo4ACwAAAAAQ29udHJhY3QgZGVzdHJveWVkAXAx0x8BghCUapi2uvLggdM/ATHIAYIQr/kPV1jLH8s/yYIQO5rKAHD7An/4QnBYA4EAggFtbds8fzgDzDHTHwGCENKUtya68uCB1AHQAYEBAdcA0gABkdSSbQHiVSBsE4++7aLt+1VS2zwo2zyBWKghbrPy9CBu8tCA+QEigQEBIln0DW+hkjBt3yBukjBtnNDUAdAB9ARZbBJvAuIgbrPYfz48KAImjoowJ26z4wIwNjY24w3ywIZVIi8pA3YgbvLQgG8iIIEBASxZ9A1voZIwbd8gbrOSKm6RcOLjAiBus5MqbrORcOLjAm6TKW6zkXDi4wJfAzY2Ni0rKgL8ggCruSjy9IEBAVO6IG6VMFn0WjCUQTP0FeIBgQEBAshZyFjPFslYzPQAyRA0EiBulTBZ9FowlEEz9BXiBiBu8tCASHDIVSCCEKYd3P1QBMsfyFADzxbJWMyBAQHPAMzJyIJYwAAAAAAAAAAAAAAAAQHLZ8zJcPsAiBA2RUASOi4B1IIA2SYn8vQBgQEBU8sgbpUwWfRaMJRBM/QV4gKBAQEDyFnIWM8WyVjM9ADJFRMgbpUwWfRaMJRBM/QV4gIgbvLQgAcgbvLQgBA5SHDIVTCCEO8tuINQBcsfyFAEzxbJUAPMgQEBzwDMzMksAmzIgljAAAAAAAAAAAAAAAABActnzMlw+wCIEDZFQIIQO5rKAHD7An/4QnBYA4EAggFtbds82zE6OALqMDmBVA8m8vQIgQEBKm0gbpUwWfRaMJRBM/QV4giBAQEJyFnIWM8WyVjM9ADJECggbpUwWfRaMJRBM/QV4lB2yFmCEP+UlPFQA8sfyFjPFskBzIEBAc8AyciCWMAAAAAAAAAAAAAAAAEBy2fMyXD7AIgQNkVAOi4BMoIQO5rKAHD7An/4QnBYA4EAggFtbds82zE4Av6CAKu5JvL0KW2BAQFTuiBulTBZ9FowlEEz9BXiAYEBAQLIWchYzxbJWMz0AMkQNBIgbpUwWfRaMJRBM/QV4gYgbvLQgEhwyFUgghCmHdz9UATLH8hQA88WyVjMgQEBzwDMyciCWMAAAAAAAAAAAAAAAAEBy2fMyXD7AIgQNkVAOjABNBKCEDuaygBw+wJ/+EJwWAOBAIIBbW3bPNsxOASIVVHbPCfbPIFYqCFus/L0ICBu8tCA2zyBWKgiIG7y0IDXSVi68vQgbvLQgPkBIYEBASJZ9AxvoZIwbd8gbrOSKG6RcOI+PDsyA9aPZzA3gVQPJPL0gQEBWAdtIG6VMFn0WjCUQTP0FOIGyAGCELXxtLVYyx/IWM8WyQHMyciCWMAAAAAAAAAAAAAAAAEBy2fMyXD7AIgQRhA1RDASghA7msoAcPsCf/hCcFgDgQCCAW1t2zzjDjo4MwP+IG6TKG6zkXDij3QwggCruSby9IEBAVEYIG6VMFn0WjCUQTP0FOIGIG7y0IAXyFmCEP8bOxRQA8sfyFjPFskBzAEg10mBAQu68uCIINcLCiCBBP+68tCJgwm68uCIzxbJyIJYwAAAAAAAAAAAAAAAAQHLZ8zJcPsAiBBGEDVEMDo3NAEq4CBus5MobrORcOLjAls2NvLAhlUTNQH8ggCruSXy9BKBAQFUEDkgbpUwWfRaMJRBM/QU4gEgbvLQgAcgbvLQgEhwyFUgghCrfIC9UATLH8hQA88WyVjMASDXSYEBC7ry4Igg1wsKIIEE/7ry0ImDCbry4IjPFgEg10mBAQu68uCIINcLCiCBBP+68tCJgwm68uCIzxbJNgJsyIJYwAAAAAAAAAAAAAAAAQHLZ8zJcPsAiBBGEDVEMIIQO5rKAHD7An/4QnBYA4EAggFtbds8OjgBLoIQO5rKAHD7An/4QnBYA4EAggFtbds8OAHKyHEBygFQBwHKAHABygJQBSDXSYEBC7ry4Igg1wsKIIEE/7ry0ImDCbry4IjPFlAD+gJwAcpoI26zkX+TJG6z4pczMwFwAcoA4w0hbrOcfwHKAAEgbvLQgAHMlTFwAcoA4skB+wA5AJh/AcoAyHABygBwAcoAJG6znX8BygAEIG7y0IBQBMyWNANwAcoA4iRus51/AcoABCBu8tCAUATMljQDcAHKAOJwAcoAAn8BygACyVjMAAwAAAAAT0sANnCfAdMHAcAAILOUAqYIAt4S5jGBXmEhwwDy9AG27aLt+yDXScAIIddKwACwjhIg1wsHwC6aMMhwAcsHydDbMeDebch/f3B/iuYwMTQDk18DbeACs5JvApEx4sgBbyJZzxeTIW6zmwFvInBQA8sHAc8X6HAyywfJ0D0A8CbXScAAjhswJddKIMABlTAF1DDQmsIBlV8Gbdsx4AXiBXDeII5PMTIE0wchwC0iwC5csSTCLyXBOrCxJMJgJcF7sLGzU4KwsZVfCG3bMeCOEjJQVbGVXwRt2zHgAm8CyHB/f5s2cAJwBcsHAwVGZOIQRQNQJN4gswAS+EJSYMcF8uCEAdrtRNDUAfhj0gABjjL6QAEg10mBAQu68uCIINcLCiCBBP+68tCJgwm68uCIAdIA0gDSAFUgA/QE9AQGRVVsFuD4KNcLCoMJuvLgifpAASDXSYEBC7ry4Igg1wsKIIEE/7ry0ImDCbry4IgB0ds8QAAObW1/f39ANCSudg0=');
     let builder = beginCell();
     builder.storeRef(__system);
     builder.storeUint(0, 1);
@@ -754,6 +942,7 @@ const SimpleDNSContract_errors: { [key: number]: { message: string } } = {
     21519: { message: `Can't remove records` },
     22696: { message: `Invalid domain` },
     24161: { message: `Invalid DNS name` },
+    25569: { message: `Can't destroy contract` },
     26438: { message: `Fuse already burned` },
     43961: { message: `Can't add records` },
     55590: { message: `Can't replace records` },
@@ -786,19 +975,25 @@ export class SimpleDNSContract implements Contract {
         this.init = init;
     }
     
-    async send(provider: ContractProvider, via: Sender, args: { value: bigint, bounce?: boolean| null | undefined }, message: UpdateRecord | 'burn canAdd' | 'burn canRemove' | 'burn canReplace' | Deploy | ChangeOwner) {
+    async send(provider: ContractProvider, via: Sender, args: { value: bigint, bounce?: boolean| null | undefined }, message: UpdateSubdomain | UpdateRecord | 'Destroy' | 'Burn canAdd' | 'Burn canRemove' | 'Burn canReplace' | Deploy | ChangeOwner) {
         
         let body: Cell | null = null;
+        if (message && typeof message === 'object' && !(message instanceof Slice) && message.$$type === 'UpdateSubdomain') {
+            body = beginCell().store(storeUpdateSubdomain(message)).endCell();
+        }
         if (message && typeof message === 'object' && !(message instanceof Slice) && message.$$type === 'UpdateRecord') {
             body = beginCell().store(storeUpdateRecord(message)).endCell();
         }
-        if (message === 'burn canAdd') {
+        if (message === 'Destroy') {
             body = beginCell().storeUint(0, 32).storeStringTail(message).endCell();
         }
-        if (message === 'burn canRemove') {
+        if (message === 'Burn canAdd') {
             body = beginCell().storeUint(0, 32).storeStringTail(message).endCell();
         }
-        if (message === 'burn canReplace') {
+        if (message === 'Burn canRemove') {
+            body = beginCell().storeUint(0, 32).storeStringTail(message).endCell();
+        }
+        if (message === 'Burn canReplace') {
             body = beginCell().storeUint(0, 32).storeStringTail(message).endCell();
         }
         if (message && typeof message === 'object' && !(message instanceof Slice) && message.$$type === 'Deploy') {

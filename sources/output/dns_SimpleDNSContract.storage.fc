@@ -81,6 +81,19 @@ cell $DeployOk$_store_cell((int) v) inline {
 }
 
 ;;
+;; Type: UpdateSubdomain
+;; Header: 0x5c3678fd
+;; TLB: update_subdomain#5c3678fd domain:^string address:Maybe address = UpdateSubdomain
+;;
+
+(slice, ((slice, slice))) $UpdateSubdomain$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 1547073789);
+    var v'domain = sc_0~load_ref().begin_parse();
+    var v'address = sc_0~__tact_load_address_opt();
+    return (sc_0, (v'domain, v'address));
+}
+
+;;
 ;; Type: Permissions
 ;; TLB: _ canAdd:bool canRemove:bool canReplace:bool = Permissions
 ;;
@@ -110,6 +123,74 @@ builder $Permissions$_store(builder build_0, (int, int, int) v) inline {
 }
 
 ;;
+;; Type: EventPermissionsUpdated
+;; Header: 0x6cd59be6
+;; TLB: event_permissions_updated#6cd59be6 permissions:Permissions{canAdd:bool,canRemove:bool,canReplace:bool} = EventPermissionsUpdated
+;;
+
+builder $EventPermissionsUpdated$_store(builder build_0, ((int, int, int)) v) inline {
+    var ((v'permissions'canAdd, v'permissions'canRemove, v'permissions'canReplace)) = v;
+    build_0 = store_uint(build_0, 1825938406, 32);
+    build_0 = $Permissions$_store(build_0, (v'permissions'canAdd, v'permissions'canRemove, v'permissions'canReplace));
+    return build_0;
+}
+
+cell $EventPermissionsUpdated$_store_cell(((int, int, int)) v) inline {
+    return $EventPermissionsUpdated$_store(begin_cell(), v).end_cell();
+}
+
+(((int, int, int))) $EventPermissionsUpdated$_constructor_permissions((int, int, int) permissions) inline {
+    return (permissions);
+}
+
+;;
+;; Type: EventRecordAdded
+;; Header: 0xa61ddcfd
+;; TLB: event_record_added#a61ddcfd domain:^string category:int257 record:^cell = EventRecordAdded
+;;
+
+builder $EventRecordAdded$_store(builder build_0, (slice, int, cell) v) inline {
+    var (v'domain, v'category, v'record) = v;
+    build_0 = store_uint(build_0, 2786974973, 32);
+    build_0 = build_0.store_ref(begin_cell().store_slice(v'domain).end_cell());
+    build_0 = build_0.store_int(v'category, 257);
+    build_0 = build_0.store_ref(v'record);
+    return build_0;
+}
+
+cell $EventRecordAdded$_store_cell((slice, int, cell) v) inline {
+    return $EventRecordAdded$_store(begin_cell(), v).end_cell();
+}
+
+((slice, int, cell)) $EventRecordAdded$_constructor_domain_category_record(slice domain, int category, cell record) inline {
+    return (domain, category, record);
+}
+
+;;
+;; Type: EventRecordUpdated
+;; Header: 0xef2db883
+;; TLB: event_record_updated#ef2db883 domain:^string category:int257 oldRecord:^cell newRecord:^cell = EventRecordUpdated
+;;
+
+builder $EventRecordUpdated$_store(builder build_0, (slice, int, cell, cell) v) inline {
+    var (v'domain, v'category, v'oldRecord, v'newRecord) = v;
+    build_0 = store_uint(build_0, 4012750979, 32);
+    build_0 = build_0.store_ref(begin_cell().store_slice(v'domain).end_cell());
+    build_0 = build_0.store_int(v'category, 257);
+    build_0 = build_0.store_ref(v'oldRecord);
+    build_0 = build_0.store_ref(v'newRecord);
+    return build_0;
+}
+
+cell $EventRecordUpdated$_store_cell((slice, int, cell, cell) v) inline {
+    return $EventRecordUpdated$_store(begin_cell(), v).end_cell();
+}
+
+((slice, int, cell, cell)) $EventRecordUpdated$_constructor_domain_category_oldRecord_newRecord(slice domain, int category, cell oldRecord, cell newRecord) inline {
+    return (domain, category, oldRecord, newRecord);
+}
+
+;;
 ;; Type: EventRecordRemoved
 ;; Header: 0xff9494f1
 ;; TLB: event_record_removed#ff9494f1 domain:^string category:int257 = EventRecordRemoved
@@ -129,6 +210,72 @@ cell $EventRecordRemoved$_store_cell((slice, int) v) inline {
 
 ((slice, int)) $EventRecordRemoved$_constructor_domain_category(slice domain, int category) inline {
     return (domain, category);
+}
+
+;;
+;; Type: EventSubdomainAdded
+;; Header: 0xff1b3b14
+;; TLB: event_subdomain_added#ff1b3b14 domain:^string address:address = EventSubdomainAdded
+;;
+
+builder $EventSubdomainAdded$_store(builder build_0, (slice, slice) v) inline {
+    var (v'domain, v'address) = v;
+    build_0 = store_uint(build_0, 4279974676, 32);
+    build_0 = build_0.store_ref(begin_cell().store_slice(v'domain).end_cell());
+    build_0 = __tact_store_address(build_0, v'address);
+    return build_0;
+}
+
+cell $EventSubdomainAdded$_store_cell((slice, slice) v) inline {
+    return $EventSubdomainAdded$_store(begin_cell(), v).end_cell();
+}
+
+((slice, slice)) $EventSubdomainAdded$_constructor_domain_address(slice domain, slice address) inline {
+    return (domain, address);
+}
+
+;;
+;; Type: EventSubdomainRemoved
+;; Header: 0xb5f1b4b5
+;; TLB: event_subdomain_removed#b5f1b4b5 domain:^string = EventSubdomainRemoved
+;;
+
+builder $EventSubdomainRemoved$_store(builder build_0, (slice) v) inline {
+    var (v'domain) = v;
+    build_0 = store_uint(build_0, 3052516533, 32);
+    build_0 = build_0.store_ref(begin_cell().store_slice(v'domain).end_cell());
+    return build_0;
+}
+
+cell $EventSubdomainRemoved$_store_cell((slice) v) inline {
+    return $EventSubdomainRemoved$_store(begin_cell(), v).end_cell();
+}
+
+((slice)) $EventSubdomainRemoved$_constructor_domain(slice domain) inline {
+    return (domain);
+}
+
+;;
+;; Type: EventSubdomainUpdated
+;; Header: 0xab7c80bd
+;; TLB: event_subdomain_updated#ab7c80bd domain:^string oldAddress:address newAddress:address = EventSubdomainUpdated
+;;
+
+builder $EventSubdomainUpdated$_store(builder build_0, (slice, slice, slice) v) inline {
+    var (v'domain, v'oldAddress, v'newAddress) = v;
+    build_0 = store_uint(build_0, 2877063357, 32);
+    build_0 = build_0.store_ref(begin_cell().store_slice(v'domain).end_cell());
+    build_0 = __tact_store_address(build_0, v'oldAddress);
+    build_0 = __tact_store_address(build_0, v'newAddress);
+    return build_0;
+}
+
+cell $EventSubdomainUpdated$_store_cell((slice, slice, slice) v) inline {
+    return $EventSubdomainUpdated$_store(begin_cell(), v).end_cell();
+}
+
+((slice, slice, slice)) $EventSubdomainUpdated$_constructor_domain_oldAddress_newAddress(slice domain, slice oldAddress, slice newAddress) inline {
+    return (domain, oldAddress, newAddress);
 }
 
 ;;

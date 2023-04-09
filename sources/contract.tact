@@ -10,6 +10,7 @@ message EventRecordUpdated { domain: String; category: Int; oldRecord: Cell; new
 message EventRecordRemoved { domain: String; category: Int; }
 message EventSubdomainAdded { domain: String; address: Address; }
 message EventSubdomainRemoved { domain: String; }
+message EventSubdomainUpdated { domain: String; oldAddress: Address; newAddress: Address; }
 
 struct DNSRecord { name: String; categories: map<Int, Cell>; }
 struct Permissions { canAdd: Bool; canRemove: Bool; canReplace: Bool; }
@@ -27,8 +28,69 @@ contract SimpleDNSContract with Deployable, OwnableTransferable, DNSResolver {
         self.permissions = Permissions { canAdd: true, canRemove: true, canReplace: true };
     }
 
+    receive(update: UpdateSubdomain) {
+        self.requireOwner();
+
+        // Resolve domain id
+        let subdomain: Slice? = dnsStringToInternal(update.domain);
+        require(subdomain != null, "Invalid domain");
+        let topLevelBits: Int = dnsExtractTopDomainLength(subdomain!!);
+        require((subdomain!!).bits() == topLevelBits, "Invalid domain");
+        let id: Int = (subdomain!!).hash();
+
+        // Check if subdomain is registered
+        let next: Address? = self.subdomains.get(id);
+        if (next != null && update.address == null) {
+
+            // Check
+            require(self.permissions.canRemove, "Can't remove records");
+
+            // Remove subdomain
+            self.subdomains.set(id, null);
+
+            // Emit event
+            emit(EventSubdomainRemoved{ domain: update.domain }.toCell());
+
+            // Reply
+            self.reply("OK".asComment());
+            return;            
+        }
+        if  (next == null && update.address != null) {
+                
+            // Check
+            require(self.permissions.canAdd, "Can't add records");
+    
+            // Register subdomain
+            self.subdomains.set(id, update.address);
+    
+            // Emit event
+            emit(EventSubdomainAdded{ domain: update.domain, address: update.address!! }.toCell());
+    
+            // Reply
+            self.reply("OK".asComment());
+            return;
+        }
+        if  (next != null && update.address != null) {
+                
+            // Check
+            require(self.permissions.canReplace, "Can't add records");
+    
+            // Register subdomain
+            self.subdomains.set(id, update.address);
+    
+            // Emit event
+            emit(EventSubdomainUpdated{ domain: update.domain, oldAddress: next!!, newAddress: update.address!! }.toCell());
+    
+            // Reply
+            self.reply("OK".asComment());
+            return;
+        }
+
+        // Reply
+        throw(134); // Invalid argument error
+    }
+
     receive(update: UpdateRecord) {
-        nativeReserve(ton("1"), 0);
         self.requireOwner();
 
         // Convert
@@ -56,7 +118,7 @@ contract SimpleDNSContract with Deployable, OwnableTransferable, DNSResolver {
                 emit(EventRecordRemoved{ domain: update.domain, category: update.category }.toCell());
 
                 // Reply
-                reply("Record removed".asComment());
+                self.reply("OK".asComment());
                 return;
             }
 
@@ -69,9 +131,12 @@ contract SimpleDNSContract with Deployable, OwnableTransferable, DNSResolver {
                 // Replace category
                 domain.categories.set(update.category, update.record);
                 self.records.set(id, domain);
+
+                // Emit event
+                emit(EventRecordUpdated{ domain: update.domain, category: update.category, oldRecord: cat!!, newRecord: update.record!! }.toCell());
     
                 // Reply
-                reply("Record replaced".asComment());
+                self.reply("OK".asComment());
                 return;
             }
 
@@ -84,9 +149,12 @@ contract SimpleDNSContract with Deployable, OwnableTransferable, DNSResolver {
                 // Replace category
                 domain.categories.set(update.category, update.record);
                 self.records.set(id, domain);
+
+                // Emit event
+                emit(EventRecordAdded{ domain: update.domain, category: update.category, record: update.record!! }.toCell());
     
                 // Reply
-                reply("Record added".asComment());
+                self.reply("OK".asComment());
                 return;
             }
         } else {
@@ -100,36 +168,53 @@ contract SimpleDNSContract with Deployable, OwnableTransferable, DNSResolver {
                 let domain: DNSRecord = DNSRecord { name: update.domain, categories: emptyMap() };
                 domain.categories.set(update.category, update.record);
                 self.records.set(id, domain);
+
+                // Emit event
+                emit(EventRecordAdded{ domain: update.domain, category: update.category, record: update.record!! }.toCell());
     
                 // Reply
-                reply("Record added".asComment());
+                self.reply("OK".asComment());
                 return;
             }
         }
 
-        // Fallback
-        reply("Record not found".asComment());
+        throw(134); // Invalid argument error
     }
 
-    receive("burn canAdd") {
+    receive("Destroy") {
+        self.requireOwner();
+        require(self.permissions.canRemove, "Can't destroy contract");
+        send(SendParameters{
+            bounce: false,
+            to: sender(),
+            value: 0,
+            mode: SendRemainingBalance, 
+            body: "Contract destroyed".asComment()
+        });
+    }
+
+    receive("Burn canAdd") {
         self.requireOwner();
         require(self.permissions.canAdd, "Fuse already burned");
         self.permissions.canAdd = false;
-        reply("Fuse burned".asComment());
+        emit(EventPermissionsUpdated{ permissions: self.permissions }.toCell());
+        self.reply("OK".asComment());
     }
 
-    receive("burn canRemove") {
+    receive("Burn canRemove") {
         self.requireOwner();
         require(self.permissions.canRemove, "Fuse already burned");
         self.permissions.canRemove = false;
-        reply("Fuse burned".asComment());
+        emit(EventPermissionsUpdated{ permissions: self.permissions }.toCell());
+        self.reply("OK".asComment());
     }
 
-    receive("burn canReplace") {
+    receive("Burn canReplace") {
         self.requireOwner();
         require(self.permissions.canReplace, "Fuse already burned");
         self.permissions.canReplace = false;
-        reply("Fuse burned".asComment());
+        emit(EventPermissionsUpdated{ permissions: self.permissions }.toCell());
+        self.reply("OK".asComment());
     }
 
     //
@@ -164,6 +249,21 @@ contract SimpleDNSContract with Deployable, OwnableTransferable, DNSResolver {
         }
         let cat: Cell? = (record!!).categories.get(category);
         return DNSResolveResult { prefix: totalBits, record: null };
+    }
+
+    //
+    // Storage
+    //
+
+    overrides inline fun reply(body: Cell?) {
+        nativeReserve(ton("1"), 0);
+        send(SendParameters{
+            bounce: true,
+            to: sender(),
+            value: 0,
+            mode: SendRemainingBalance + SendIgnoreErrors, 
+            body: body
+        });
     }
 
     //

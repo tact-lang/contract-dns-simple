@@ -1,9 +1,9 @@
 # TACT Compilation Report
 Contract: SimpleDNSContract
-BOC Size: 2523 bytes
+BOC Size: 3537 bytes
 
 # Types
-Total Types: 14
+Total Types: 18
 
 ## StateInit
 TLB: `_ code:^cell data:^cell = StateInit`
@@ -37,6 +37,10 @@ Signature: `DNSResolveResult{prefix:int257,record:Maybe ^cell}`
 TLB: `update_record#d294b726 domain:^string category:int257 record:Maybe ^cell = UpdateRecord`
 Signature: `UpdateRecord{domain:^string,category:int257,record:Maybe ^cell}`
 
+## UpdateSubdomain
+TLB: `update_subdomain#5c3678fd domain:^string address:Maybe address = UpdateSubdomain`
+Signature: `UpdateSubdomain{domain:^string,address:Maybe address}`
+
 ## EventPermissionsUpdated
 TLB: `event_permissions_updated#6cd59be6 permissions:Permissions{canAdd:bool,canRemove:bool,canReplace:bool} = EventPermissionsUpdated`
 Signature: `EventPermissionsUpdated{permissions:Permissions{canAdd:bool,canRemove:bool,canReplace:bool}}`
@@ -52,6 +56,18 @@ Signature: `EventRecordUpdated{domain:^string,category:int257,oldRecord:^cell,ne
 ## EventRecordRemoved
 TLB: `event_record_removed#ff9494f1 domain:^string category:int257 = EventRecordRemoved`
 Signature: `EventRecordRemoved{domain:^string,category:int257}`
+
+## EventSubdomainAdded
+TLB: `event_subdomain_added#ff1b3b14 domain:^string address:address = EventSubdomainAdded`
+Signature: `EventSubdomainAdded{domain:^string,address:address}`
+
+## EventSubdomainRemoved
+TLB: `event_subdomain_removed#b5f1b4b5 domain:^string = EventSubdomainRemoved`
+Signature: `EventSubdomainRemoved{domain:^string}`
+
+## EventSubdomainUpdated
+TLB: `event_subdomain_updated#ab7c80bd domain:^string oldAddress:address newAddress:address = EventSubdomainUpdated`
+Signature: `EventSubdomainUpdated{domain:^string,oldAddress:address,newAddress:address}`
 
 ## DNSRecord
 TLB: `_ name:^string categories:dict<int, ^cell> = DNSRecord`
@@ -102,6 +118,7 @@ Argument: category
 21519: Can't remove records
 22696: Invalid domain
 24161: Invalid DNS name
+25569: Can't destroy contract
 26438: Fuse already burned
 43961: Can't add records
 55590: Can't replace records

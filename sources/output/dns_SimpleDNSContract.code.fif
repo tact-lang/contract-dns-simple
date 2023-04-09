@@ -1,12 +1,14 @@
 PROGRAM{
   DECLPROC __tact_verify_address
   DECLPROC __tact_load_address
+  DECLPROC __tact_load_address_opt
   DECLPROC __tact_store_address
   DECLPROC __tact_not_null
   DECLPROC __tact_context_get_sender
   DECLPROC __tact_store_bool
   DECLPROC __tact_dict_set_int_cell
   DECLPROC __tact_dict_get_int_cell
+  DECLPROC __tact_dict_set_int_slice
   DECLPROC __tact_dict_get_int_slice
   DECLPROC __tact_slice_eq_bits
   DECLPROC $Deploy$_load
@@ -14,10 +16,23 @@ PROGRAM{
   DECLPROC $DeployOk$_store_cell
   DECLPROC $ChangeOwner$_load
   DECLPROC $UpdateRecord$_load
+  DECLPROC $UpdateSubdomain$_load
   DECLPROC $Permissions$_store
   DECLPROC $Permissions$_load
+  DECLPROC $EventPermissionsUpdated$_store
+  DECLPROC $EventPermissionsUpdated$_store_cell
+  DECLPROC $EventRecordAdded$_store
+  DECLPROC $EventRecordAdded$_store_cell
+  DECLPROC $EventRecordUpdated$_store
+  DECLPROC $EventRecordUpdated$_store_cell
   DECLPROC $EventRecordRemoved$_store
   DECLPROC $EventRecordRemoved$_store_cell
+  DECLPROC $EventSubdomainAdded$_store
+  DECLPROC $EventSubdomainAdded$_store_cell
+  DECLPROC $EventSubdomainRemoved$_store
+  DECLPROC $EventSubdomainRemoved$_store_cell
+  DECLPROC $EventSubdomainUpdated$_store
+  DECLPROC $EventSubdomainUpdated$_store_cell
   DECLPROC $DNSRecord$_store
   DECLPROC $DNSRecord$_store_cell
   DECLPROC $DNSRecord$_load
@@ -35,8 +50,6 @@ PROGRAM{
   DECLPROC $SimpleDNSContract$_contract_load
   DECLPROC $SimpleDNSContract$_contract_store
   DECLPROC $global_send
-  DECLPROC $SendParameters$_constructor_bounce_to_value_mode_body
-  DECLPROC $global_reply
   DECLPROC $global_emit
   DECLPROC $global_dnsExtractTopDomainLength
   DECLPROC $global_dnsExtractTopDomain
@@ -44,21 +57,31 @@ PROGRAM{
   DECLPROC $DNSResolveResult$_constructor_prefix_record
   DECLPROC $SimpleDNSContract$_fun_resolveByKey
   DECLPROC $SimpleDNSContract$_fun_doResolveDNS
+  DECLPROC $SendParameters$_constructor_bounce_to_value_mode_body
+  DECLPROC $SimpleDNSContract$_fun_reply
   DECLPROC $SimpleDNSContract$_fun_records
   DECLPROC $SimpleDNSContract$_fun_permissions
   DECLPROC $SimpleDNSContract$_fun_requireOwner
   DECLPROC $SimpleDNSContract$_fun_owner
   DECLPROC $SimpleDNSContract$_fun_dnsresolve
+  DECLPROC $EventSubdomainRemoved$_constructor_domain
+  DECLPROC $EventSubdomainAdded$_constructor_domain_address
+  DECLPROC $EventSubdomainUpdated$_constructor_domain_oldAddress_newAddress
   DECLPROC $EventRecordRemoved$_constructor_domain_category
+  DECLPROC $EventRecordUpdated$_constructor_domain_category_oldRecord_newRecord
+  DECLPROC $EventRecordAdded$_constructor_domain_category_record
   DECLPROC $DNSRecord$_constructor_name_categories
+  DECLPROC $EventPermissionsUpdated$_constructor_permissions
   DECLPROC $DeployOk$_constructor_queryId
   DECLPROC dns_string_to_internal
   DECLPROC dns_internal_verify
   DECLPROC dns_internal_normalize
+  DECLPROC $SimpleDNSContract$_internal_binary_UpdateSubdomain
   DECLPROC $SimpleDNSContract$_internal_binary_UpdateRecord
-  DECLPROC $SimpleDNSContract$_internal_text_eb8785ff102d802bfc95f9970f0d1f2feab5a15893d3402a464fca380d940661
-  DECLPROC $SimpleDNSContract$_internal_text_a966acc35d36f27b3d55882e2de7226c08cbcc65ca879aeb5319384c73c9316a
-  DECLPROC $SimpleDNSContract$_internal_text_ab7e10f8400a7f0bab15606d627d14c5fdf8a04f2adf28c1431fc83db0d0aad3
+  DECLPROC $SimpleDNSContract$_internal_text_986c2ba124bb9287eb4a0bd8d3104e1c0067a3c93952d889c74d08185bd30d4d
+  DECLPROC $SimpleDNSContract$_internal_text_d2005cb41bfed83f8e13cbc2b97add71e548ab1110cae3779714ba04c69bfe19
+  DECLPROC $SimpleDNSContract$_internal_text_39ef51f74a9c5606f6c982036567d50f546ef3dcbdf72f86bf738d2167f49f6e
+  DECLPROC $SimpleDNSContract$_internal_text_ada62c0d7d0fa562468e3438dc53bdc30cac26e1e95ddc4408bb4beea0665fc4
   DECLPROC $SimpleDNSContract$_internal_binary_Deploy
   DECLPROC $SimpleDNSContract$_internal_binary_ChangeOwner
   114139 DECLMETHOD %records
@@ -94,6 +117,19 @@ PROGRAM{
     LDMSGADDR
     SWAP
     __tact_verify_address INLINECALLDICT
+  }>
+  __tact_load_address_opt PROCINLINE:<{
+    LDMSGADDR
+    OVER
+    2 PLDU
+    0 NEQINT
+    IF:<{
+      SWAP
+      __tact_verify_address INLINECALLDICT
+    }>ELSE<{
+      NIP
+      PUSHNULL
+    }>
   }>
   __tact_store_address PROCINLINE:<{
     __tact_verify_address INLINECALLDICT
@@ -132,6 +168,19 @@ PROGRAM{
     }>ELSE<{
       DROP
       PUSHNULL
+    }>
+  }>
+  __tact_dict_set_int_slice PROCINLINE:<{
+    DUP
+    ISNULL
+    IF:<{
+      DROP
+      -ROT
+      DICTIDEL
+      DROP
+    }>ELSE<{
+      s1 s3 s3 XCHG3
+      DICTISET
     }>
   }>
   __tact_dict_get_int_slice PROCINLINE:<{
@@ -198,6 +247,19 @@ PROGRAM{
     }>
     3 -ROLL
   }>
+  $UpdateSubdomain$_load PROCINLINE:<{
+    32 LDU
+    SWAP
+    1547073789 PUSHINT
+    EQUAL
+    129 THROWIFNOT
+    LDREF
+    SWAP
+    CTOS
+    SWAP
+    __tact_load_address_opt INLINECALLDICT
+    s1 s2 XCHG
+  }>
   $Permissions$_store PROCINLINE:<{
     s2 s3 XCHG2
     1 STI
@@ -209,6 +271,60 @@ PROGRAM{
     1 LDI
     1 LDI
     3 -ROLL
+  }>
+  $EventPermissionsUpdated$_store PROCINLINE:<{
+    1825938406 PUSHINT
+    s0 s4 XCHG2
+    32 STU
+    s0 s3 XCHG
+    $Permissions$_store INLINECALLDICT
+  }>
+  $EventPermissionsUpdated$_store_cell PROCINLINE:<{
+    NEWC
+    3 -ROLL
+    $EventPermissionsUpdated$_store INLINECALLDICT
+    ENDC
+  }>
+  $EventRecordAdded$_store PROCINLINE:<{
+    2786974973 PUSHINT
+    s0 s4 XCHG2
+    32 STU
+    NEWC
+    s0 s3 XCHG2
+    STSLICER
+    ENDC
+    ROT
+    STREF
+    257 PUSHINT
+    STIX
+    STREF
+  }>
+  $EventRecordAdded$_store_cell PROCINLINE:<{
+    NEWC
+    3 -ROLL
+    $EventRecordAdded$_store INLINECALLDICT
+    ENDC
+  }>
+  $EventRecordUpdated$_store PROCINLINE:<{
+    4012750979 PUSHINT
+    s0 s5 XCHG2
+    32 STU
+    NEWC
+    s0 s4 XCHG2
+    STSLICER
+    ENDC
+    s0 s3 XCHG2
+    STREF
+    257 PUSHINT
+    STIX
+    STREF
+    STREF
+  }>
+  $EventRecordUpdated$_store_cell PROCINLINE:<{
+    NEWC
+    4 -ROLL
+    $EventRecordUpdated$_store INLINECALLDICT
+    ENDC
   }>
   $EventRecordRemoved$_store PROCINLINE:<{
     4287927537 PUSHINT
@@ -227,6 +343,63 @@ PROGRAM{
     NEWC
     -ROT
     $EventRecordRemoved$_store INLINECALLDICT
+    ENDC
+  }>
+  $EventSubdomainAdded$_store PROCINLINE:<{
+    4279974676 PUSHINT
+    s0 s3 XCHG2
+    32 STU
+    NEWC
+    ROT
+    STSLICER
+    ENDC
+    SWAP
+    STREF
+    SWAP
+    __tact_store_address INLINECALLDICT
+  }>
+  $EventSubdomainAdded$_store_cell PROCINLINE:<{
+    NEWC
+    -ROT
+    $EventSubdomainAdded$_store INLINECALLDICT
+    ENDC
+  }>
+  $EventSubdomainRemoved$_store PROCINLINE:<{
+    3052516533 PUSHINT
+    ROT
+    32 STU
+    NEWC
+    ROT
+    STSLICER
+    ENDC
+    SWAP
+    STREF
+  }>
+  $EventSubdomainRemoved$_store_cell PROCINLINE:<{
+    NEWC
+    SWAP
+    $EventSubdomainRemoved$_store INLINECALLDICT
+    ENDC
+  }>
+  $EventSubdomainUpdated$_store PROCINLINE:<{
+    2877063357 PUSHINT
+    s0 s4 XCHG2
+    32 STU
+    NEWC
+    s0 s3 XCHG2
+    STSLICER
+    ENDC
+    ROT
+    STREF
+    SWAP
+    __tact_store_address INLINECALLDICT
+    SWAP
+    __tact_store_address INLINECALLDICT
+  }>
+  $EventSubdomainUpdated$_store_cell PROCINLINE:<{
+    NEWC
+    3 -ROLL
+    $EventSubdomainUpdated$_store INLINECALLDICT
     ENDC
   }>
   $DNSRecord$_store PROCINLINE:<{
@@ -451,21 +624,6 @@ PROGRAM{
     SWAP
     SENDRAWMSG
   }>
-  $SendParameters$_constructor_bounce_to_value_mode_body PROCINLINE:<{
-    PUSHNULL
-    PUSHNULL
-  }>
-  $global_reply PROCINLINE:<{
-    TRUE
-    __tact_context_get_sender INLINECALLDICT
-    0 PUSHINT
-    ROT
-    s0 s3 XCHG
-    66 PUSHINT
-    SWAP
-    $SendParameters$_constructor_bounce_to_value_mode_body INLINECALLDICT
-    $global_send INLINECALLDICT
-  }>
   $global_emit PROCINLINE:<{
     NEWC
     15211807202738752817960438464513 PUSHINT
@@ -605,6 +763,24 @@ PROGRAM{
     s3 s5 XCHG
     s2 s4 XCHG
   }>
+  $SendParameters$_constructor_bounce_to_value_mode_body PROCINLINE:<{
+    PUSHNULL
+    PUSHNULL
+  }>
+  $SimpleDNSContract$_fun_reply PROCINLINE:<{
+    1000000000 PUSHINT
+    0 PUSHINT
+    RAWRESERVE
+    TRUE
+    __tact_context_get_sender INLINECALLDICT
+    0 PUSHINT
+    ROT
+    s0 s3 XCHG
+    130 PUSHINT
+    SWAP
+    $SendParameters$_constructor_bounce_to_value_mode_body INLINECALLDICT
+    $global_send INLINECALLDICT
+  }>
   $SimpleDNSContract$_fun_records PROCREF:<{
     OVER
   }>
@@ -649,9 +825,21 @@ PROGRAM{
     s3 s4 XCHG
     s2 s3 XCHG
   }>
+  $EventSubdomainRemoved$_constructor_domain PROCINLINE:<{
+  }>
+  $EventSubdomainAdded$_constructor_domain_address PROCINLINE:<{
+  }>
+  $EventSubdomainUpdated$_constructor_domain_oldAddress_newAddress PROCINLINE:<{
+  }>
   $EventRecordRemoved$_constructor_domain_category PROCINLINE:<{
   }>
+  $EventRecordUpdated$_constructor_domain_category_oldRecord_newRecord PROCINLINE:<{
+  }>
+  $EventRecordAdded$_constructor_domain_category_record PROCINLINE:<{
+  }>
   $DNSRecord$_constructor_name_categories PROCINLINE:<{
+  }>
+  $EventPermissionsUpdated$_constructor_permissions PROCINLINE:<{
   }>
   $DeployOk$_constructor_queryId PROCINLINE:<{
   }>
@@ -978,13 +1166,135 @@ PROGRAM{
     ENDC
     CTOS
   }>
+  $SimpleDNSContract$_internal_binary_UpdateSubdomain PROCINLINE:<{
+    6 2 BLKSWAP
+    $SimpleDNSContract$_fun_requireOwner INLINECALLDICT
+    s7 PUSH
+    dns_string_to_internal INLINECALLDICT
+    22696 PUSHINT
+    OVER
+    ISNULL
+    NOT
+    THROWANYIFNOT
+    DUP
+    __tact_not_null INLINECALLDICT
+    $global_dnsExtractTopDomainLength INLINECALLDICT
+    22696 PUSHINT
+    s2 PUSH
+    __tact_not_null INLINECALLDICT
+    SBITS
+    ROT
+    EQUAL
+    THROWANYIFNOT
+    __tact_not_null INLINECALLDICT
+    HASHSU
+    OVER
+    257 PUSHINT
+    s2 PUSH
+    __tact_dict_get_int_slice INLINECALLDICT
+    DUP
+    ISNULL
+    NOT
+    IF:<{
+      s8 PUSH
+      ISNULL
+    }>ELSE<{
+      FALSE
+    }>
+    IF:<{
+      DROP
+      s7 POP
+      21519 PUSHINT
+      s4 PUSH
+      THROWANYIFNOT
+      257 PUSHINT
+      ROT
+      s0 s7 XCHG
+      PUSHNULL
+      __tact_dict_set_int_slice INLINECALLDICT
+      s0 s6 XCHG
+      $EventSubdomainRemoved$_constructor_domain INLINECALLDICT
+      $EventSubdomainRemoved$_store_cell INLINECALLDICT
+      $global_emit INLINECALLDICT
+      B{b5ee9c7241010101000800000c000000004f4b86af522d} B>boc PUSHREF
+      s4 s6 XCHG
+      s3 s5 XCHG
+      s4 s3 s0 XCHG3
+      s1 s2 XCHG
+      $SimpleDNSContract$_fun_reply INLINECALLDICT
+    }>ELSE<{
+      DUP
+      ISNULL
+      IF:<{
+        s8 PUSH
+        ISNULL
+        NOT
+      }>ELSE<{
+        FALSE
+      }>
+      IFJMP:<{
+        DROP
+        43961 PUSHINT
+        s6 PUSH
+        THROWANYIFNOT
+        257 PUSHINT
+        s1 s8 XCPU
+        __tact_dict_set_int_slice INLINECALLDICT
+        s0 s6 XCHG
+        __tact_not_null INLINECALLDICT
+        s1 s7 XCHG
+        $EventSubdomainAdded$_constructor_domain_address INLINECALLDICT
+        $EventSubdomainAdded$_store_cell INLINECALLDICT
+        $global_emit INLINECALLDICT
+        B{b5ee9c7241010101000800000c000000004f4b86af522d} B>boc PUSHREF
+        s4 s6 XCHG
+        s3 s5 XCHG
+        s4 s3 s0 XCHG3
+        $SimpleDNSContract$_fun_reply INLINECALLDICT
+      }>
+      DUP
+      ISNULL
+      NOT
+      IF:<{
+        s8 PUSH
+        ISNULL
+        NOT
+      }>ELSE<{
+        FALSE
+      }>
+      IFJMP:<{
+        43961 PUSHINT
+        s5 PUSH
+        THROWANYIFNOT
+        s1 s2 XCHG
+        257 PUSHINT
+        s0 s3 s9 XC2PU
+        __tact_dict_set_int_slice INLINECALLDICT
+        SWAP
+        __tact_not_null INLINECALLDICT
+        s0 s7 XCHG
+        __tact_not_null INLINECALLDICT
+        s8 s7 s0 XCHG3
+        $EventSubdomainUpdated$_constructor_domain_oldAddress_newAddress INLINECALLDICT
+        $EventSubdomainUpdated$_store_cell INLINECALLDICT
+        $global_emit INLINECALLDICT
+        B{b5ee9c7241010101000800000c000000004f4b86af522d} B>boc PUSHREF
+        s4 s6 XCHG
+        s3 s5 XCHG
+        s4 s3 s0 XCHG3
+        $SimpleDNSContract$_fun_reply INLINECALLDICT
+      }>
+      2DROP
+      s6 POP
+      s6 POP
+      134 THROW
+      2 4 BLKSWAP
+    }>
+  }>
   $SimpleDNSContract$_internal_binary_UpdateRecord PROCINLINE:<{
     CONT:<{
       c2 SAVE
       SAMEALTSAVE
-      1000000000 PUSHINT
-      0 PUSHINT
-      RAWRESERVE
       6 3 BLKSWAP
       $SimpleDNSContract$_fun_requireOwner INLINECALLDICT
       s8 PUSH
@@ -1040,15 +1350,53 @@ PROGRAM{
           $EventRecordRemoved$_constructor_domain_category INLINECALLDICT
           $EventRecordRemoved$_store_cell INLINECALLDICT
           $global_emit INLINECALLDICT
-          B{b5ee9c72410101010014000024000000005265636f72642072656d6f766564fa3024f0} B>boc PUSHREF
-          $global_reply INLINECALLDICT
-          3 3 BLKSWAP
+          B{b5ee9c7241010101000800000c000000004f4b86af522d} B>boc PUSHREF
+          s3 s6 XCHG
+          s5 s4 s0 XCHG3
+          $SimpleDNSContract$_fun_reply INLINECALLDICT
           RETALT
         }>
-        s12 POP
-        s11 PUSH
+        DUP
         ISNULL
         NOT
+        IF:<{
+          s10 PUSH
+          ISNULL
+          NOT
+        }>ELSE<{
+          FALSE
+        }>
+        IFJMP:<{
+          55590 PUSHINT
+          s7 PUSH
+          THROWANYIFNOT
+          SWAP
+          257 PUSHINT
+          s12 s11 PUSH2
+          __tact_dict_set_int_cell INLINECALLDICT
+          s0 s2 XCHG
+          257 PUSHINT
+          s0 s3 XCHG
+          $DNSRecord$_store_cell INLINECALLDICT
+          s1 s5 XCHG
+          s1 s3 XCHG
+          __tact_dict_set_int_cell INLINECALLDICT
+          s0 s2 XCHG
+          __tact_not_null INLINECALLDICT
+          s0 s7 XCHG
+          __tact_not_null INLINECALLDICT
+          s3 s9 XCHG
+          s8 s7 s0 XCHG3
+          $EventRecordUpdated$_constructor_domain_category_oldRecord_newRecord INLINECALLDICT
+          $EventRecordUpdated$_store_cell INLINECALLDICT
+          $global_emit INLINECALLDICT
+          B{b5ee9c7241010101000800000c000000004f4b86af522d} B>boc PUSHREF
+          s3 s6 XCHG
+          s5 s4 s0 XCHG3
+          $SimpleDNSContract$_fun_reply INLINECALLDICT
+          RETALT
+        }>
+        ISNULL
         IF:<{
           s9 PUSH
           ISNULL
@@ -1057,58 +1405,33 @@ PROGRAM{
           FALSE
         }>
         IFJMP:<{
-          s11 POP
-          55590 PUSHINT
-          s5 PUSH
-          THROWANYIFNOT
-          s2 s10 XCHG
-          257 PUSHINT
-          s0 s10 s9 XCHG3
-          __tact_dict_set_int_cell INLINECALLDICT
-          s0 s7 XCHG
-          257 PUSHINT
-          s0 s8 XCHG
-          $DNSRecord$_store_cell INLINECALLDICT
-          s7 s3 s0 XCHG3
-          s1 s6 XCHG
-          __tact_dict_set_int_cell INLINECALLDICT
-          B{b5ee9c72410101010015000026000000005265636f7264207265706c616365643f8882f0} B>boc PUSHREF
-          $global_reply INLINECALLDICT
-          s5 s0 s4 XCHG3
-          s0 s2 XCHG
-          RETALT
-        }>
-        s0 s11 XCHG
-        ISNULL
-        IF:<{
-          s8 PUSH
-          ISNULL
-          NOT
-        }>ELSE<{
-          FALSE
-        }>
-        IFJMP:<{
           43961 PUSHINT
-          s7 PUSH
+          s8 PUSH
           THROWANYIFNOT
-          s2 s10 XCHG
           257 PUSHINT
-          s0 s10 s9 XCHG3
+          s11 s10 PUSH2
           __tact_dict_set_int_cell INLINECALLDICT
-          s0 s7 XCHG
+          SWAP
           257 PUSHINT
-          s0 s8 XCHG
-          $DNSRecord$_store_cell INLINECALLDICT
-          s7 s3 s0 XCHG3
-          s1 s6 XCHG
-          __tact_dict_set_int_cell INLINECALLDICT
-          B{b5ee9c72410101010012000020000000005265636f72642061646465643dfa28d0} B>boc PUSHREF
-          $global_reply INLINECALLDICT
-          s5 s0 s4 XCHG3
           s0 s2 XCHG
+          $DNSRecord$_store_cell INLINECALLDICT
+          s3 s4 XCHG
+          s1 s2 XCHG
+          __tact_dict_set_int_cell INLINECALLDICT
+          s0 s6 XCHG
+          __tact_not_null INLINECALLDICT
+          s8 s7 s0 XCHG3
+          $EventRecordAdded$_constructor_domain_category_record INLINECALLDICT
+          $EventRecordAdded$_store_cell INLINECALLDICT
+          $global_emit INLINECALLDICT
+          B{b5ee9c7241010101000800000c000000004f4b86af522d} B>boc PUSHREF
+          s3 s6 XCHG
+          s5 s4 s0 XCHG3
+          s1 s2 XCHG
+          $SimpleDNSContract$_fun_reply INLINECALLDICT
           RETALT
         }>
-        2DROP
+        3 BLKDROP
         s6 POP
         s6 POP
         s6 POP
@@ -1121,24 +1444,30 @@ PROGRAM{
           43961 PUSHINT
           s6 PUSH
           THROWANYIFNOT
-          s0 s9 XCHG
+          s9 PUSH
           PUSHNULL
           $DNSRecord$_constructor_name_categories INLINECALLDICT
-          s0 s2 XCHG
           257 PUSHINT
-          s0 s10 s9 XCHG3
+          s11 s10 PUSH2
+          __tact_dict_set_int_cell INLINECALLDICT
+          SWAP
+          257 PUSHINT
+          s0 s2 XCHG
+          $DNSRecord$_store_cell INLINECALLDICT
+          s3 s4 XCHG
+          s1 s2 XCHG
           __tact_dict_set_int_cell INLINECALLDICT
           s0 s6 XCHG
-          257 PUSHINT
-          s0 s7 XCHG
-          $DNSRecord$_store_cell INLINECALLDICT
-          s6 s3 s0 XCHG3
-          s1 s8 XCHG
-          __tact_dict_set_int_cell INLINECALLDICT
-          B{b5ee9c72410101010012000020000000005265636f72642061646465643dfa28d0} B>boc PUSHREF
-          $global_reply INLINECALLDICT
+          __tact_not_null INLINECALLDICT
+          s8 s7 s0 XCHG3
+          $EventRecordAdded$_constructor_domain_category_record INLINECALLDICT
+          $EventRecordAdded$_store_cell INLINECALLDICT
+          $global_emit INLINECALLDICT
+          B{b5ee9c7241010101000800000c000000004f4b86af522d} B>boc PUSHREF
+          s3 s6 XCHG
           s5 s4 s0 XCHG3
-          s3 s0 s0 XCHG3
+          s1 s2 XCHG
+          $SimpleDNSContract$_fun_reply INLINECALLDICT
           RETALT
         }>
         DROP
@@ -1146,46 +1475,70 @@ PROGRAM{
         s6 POP
         s6 POP
       }>
-      B{b5ee9c72410101010016000028000000005265636f7264206e6f7420666f756e64644c7342} B>boc PUSHREF
-      $global_reply INLINECALLDICT
+      134 THROW
       3 3 BLKSWAP
     }>
     EXECUTE
   }>
-  $SimpleDNSContract$_internal_text_eb8785ff102d802bfc95f9970f0d1f2feab5a15893d3402a464fca380d940661 PROCINLINE:<{
+  $SimpleDNSContract$_internal_text_986c2ba124bb9287eb4a0bd8d3104e1c0067a3c93952d889c74d08185bd30d4d PROCINLINE:<{
+    $SimpleDNSContract$_fun_requireOwner INLINECALLDICT
+    25569 PUSHINT
+    s4 PUSH
+    THROWANYIFNOT
+    FALSE
+    __tact_context_get_sender INLINECALLDICT
+    0 PUSHINT
+    7 PUSHPOW2
+    B{b5ee9c7241010101001800002c00000000436f6e74726163742064657374726f79656454dbd534} B>boc PUSHREF
+    $SendParameters$_constructor_bounce_to_value_mode_body INLINECALLDICT
+    $global_send INLINECALLDICT
+  }>
+  $SimpleDNSContract$_internal_text_d2005cb41bfed83f8e13cbc2b97add71e548ab1110cae3779714ba04c69bfe19 PROCINLINE:<{
     $SimpleDNSContract$_fun_requireOwner INLINECALLDICT
     26438 PUSHINT
     s0 s5 XCHG2
     THROWANYIFNOT
     FALSE
-    B{b5ee9c7241010101001100001e0000000046757365206275726e6564c5b23bf8} B>boc PUSHREF
-    $global_reply INLINECALLDICT
-    s0 s4 XCHG
+    s0 s3 s2 PUSH3
+    $EventPermissionsUpdated$_constructor_permissions INLINECALLDICT
+    $EventPermissionsUpdated$_store_cell INLINECALLDICT
+    $global_emit INLINECALLDICT
+    B{b5ee9c7241010101000800000c000000004f4b86af522d} B>boc PUSHREF
+    s1 s5 XCHG
+    $SimpleDNSContract$_fun_reply INLINECALLDICT
   }>
-  $SimpleDNSContract$_internal_text_a966acc35d36f27b3d55882e2de7226c08cbcc65ca879aeb5319384c73c9316a PROCINLINE:<{
+  $SimpleDNSContract$_internal_text_39ef51f74a9c5606f6c982036567d50f546ef3dcbdf72f86bf738d2167f49f6e PROCINLINE:<{
     $SimpleDNSContract$_fun_requireOwner INLINECALLDICT
     26438 PUSHINT
     s0 s4 XCHG2
     THROWANYIFNOT
     FALSE
-    B{b5ee9c7241010101001100001e0000000046757365206275726e6564c5b23bf8} B>boc PUSHREF
-    $global_reply INLINECALLDICT
-    s0 s3 XCHG
+    s4 s0 s2 PUSH3
+    $EventPermissionsUpdated$_constructor_permissions INLINECALLDICT
+    $EventPermissionsUpdated$_store_cell INLINECALLDICT
+    $global_emit INLINECALLDICT
+    B{b5ee9c7241010101000800000c000000004f4b86af522d} B>boc PUSHREF
+    s1 s4 XCHG
+    $SimpleDNSContract$_fun_reply INLINECALLDICT
   }>
-  $SimpleDNSContract$_internal_text_ab7e10f8400a7f0bab15606d627d14c5fdf8a04f2adf28c1431fc83db0d0aad3 PROCINLINE:<{
+  $SimpleDNSContract$_internal_text_ada62c0d7d0fa562468e3438dc53bdc30cac26e1e95ddc4408bb4beea0665fc4 PROCINLINE:<{
     $SimpleDNSContract$_fun_requireOwner INLINECALLDICT
     26438 PUSHINT
     s0 s3 XCHG2
     THROWANYIFNOT
     FALSE
-    B{b5ee9c7241010101001100001e0000000046757365206275726e6564c5b23bf8} B>boc PUSHREF
-    $global_reply INLINECALLDICT
-    s0 s2 XCHG
+    s4 s3 s0 PUSH3
+    $EventPermissionsUpdated$_constructor_permissions INLINECALLDICT
+    $EventPermissionsUpdated$_store_cell INLINECALLDICT
+    $global_emit INLINECALLDICT
+    B{b5ee9c7241010101000800000c000000004f4b86af522d} B>boc PUSHREF
+    s1 s3 XCHG
+    $SimpleDNSContract$_fun_reply INLINECALLDICT
   }>
   $SimpleDNSContract$_internal_binary_Deploy PROCINLINE:<{
     $DeployOk$_constructor_queryId INLINECALLDICT
     $DeployOk$_store_cell INLINECALLDICT
-    $global_reply INLINECALLDICT
+    $SimpleDNSContract$_fun_reply INLINECALLDICT
   }>
   $SimpleDNSContract$_internal_binary_ChangeOwner PROCINLINE:<{
     6 -ROLL
@@ -1224,7 +1577,7 @@ PROGRAM{
     86142586315491086060343270784266291122 PUSHINT
   }>
   get_abi_ipfs PROC:<{
-    x{697066733a2f2f516d523361516f6a4336473563763437613753776a436558536869787970454b436a53637563455a33413642684b} PUSHSLICE
+    x{697066733a2f2f516d4e684e397a707375324b3364574b574265704a3671325178645768715846523959776d5659416d6d314e3452} PUSHSLICE
   }>
   lazy_deployment_completed PROC:<{
     c4 PUSH
@@ -1247,6 +1600,16 @@ PROGRAM{
     s0 s2 XCHG
     IFJMP:<{
       2DROP
+      TRUE
+    }>
+    OVER
+    1547073789 PUSHINT
+    EQUAL
+    IFJMP:<{
+      NIP
+      $UpdateSubdomain$_load INLINECALLDICT
+      1 2 BLKDROP2
+      $SimpleDNSContract$_internal_binary_UpdateSubdomain INLINECALLDICT
       TRUE
     }>
     OVER
@@ -1284,27 +1647,36 @@ PROGRAM{
     IF:<{
       HASHSU
       DUP
-      106532968579566920977767004365664898221510733308756428058669884789006489880161 PUSHINT
+      68942673587165287250091431766268285359585855031594722650534428464957340454221 PUSHINT
       EQUAL
       IFJMP:<{
         DROP
-        $SimpleDNSContract$_internal_text_eb8785ff102d802bfc95f9970f0d1f2feab5a15893d3402a464fca380d940661 INLINECALLDICT
+        $SimpleDNSContract$_internal_text_986c2ba124bb9287eb4a0bd8d3104e1c0067a3c93952d889c74d08185bd30d4d INLINECALLDICT
         TRUE
         RETALT
       }>
       DUP
-      76622282178557309997349264909555638985417942174953605364867716345704072425834 PUSHINT
+      94986338018888515289381316516531764494634838114154531356436789983355294449177 PUSHINT
       EQUAL
       IFJMP:<{
         DROP
-        $SimpleDNSContract$_internal_text_a966acc35d36f27b3d55882e2de7226c08cbcc65ca879aeb5319384c73c9316a INLINECALLDICT
+        $SimpleDNSContract$_internal_text_d2005cb41bfed83f8e13cbc2b97add71e548ab1110cae3779714ba04c69bfe19 INLINECALLDICT
         TRUE
         RETALT
       }>
-      77568236958653255522300853133856416528467608146621545395429419162096150555347 PUSHINT
+      DUP
+      26204674526146557315519075336087739644079299015213213197404745568514794102638 PUSHINT
       EQUAL
       IFJMP:<{
-        $SimpleDNSContract$_internal_text_ab7e10f8400a7f0bab15606d627d14c5fdf8a04f2adf28c1431fc83db0d0aad3 INLINECALLDICT
+        DROP
+        $SimpleDNSContract$_internal_text_39ef51f74a9c5606f6c982036567d50f546ef3dcbdf72f86bf738d2167f49f6e INLINECALLDICT
+        TRUE
+        RETALT
+      }>
+      78543723458147335307383762661449563484032229164316731979264711444752002080708 PUSHINT
+      EQUAL
+      IFJMP:<{
+        $SimpleDNSContract$_internal_text_ada62c0d7d0fa562468e3438dc53bdc30cac26e1e95ddc4408bb4beea0665fc4 INLINECALLDICT
         TRUE
         RETALT
       }>
