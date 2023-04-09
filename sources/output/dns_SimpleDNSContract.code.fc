@@ -198,7 +198,7 @@ cell $global_dnsResolveNext(slice $address) impure inline_ref {
     var ($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains) = $self;
     ($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains)~$SimpleDNSContract$_fun_requireOwner();
     throw_unless(25569, $self'permissions'canRemove);
-    $global_send($SendParameters$_constructor_bounce_to_value_mode_body(false, __tact_context_get_sender(), 0, 128, __gen_cell_comment_d0eb08c41bdebaa57d4264bc1d1a8ce09adbf409ec16ee54951457d71e3e04e9()));
+    $global_send($SendParameters$_constructor_bounce_to_value_mode_body(false, __tact_context_get_sender(), 0, (128 + 32), __gen_cell_comment_d0eb08c41bdebaa57d4264bc1d1a8ce09adbf409ec16ee54951457d71e3e04e9()));
     return (($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains), ());
 }
 

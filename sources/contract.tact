@@ -188,7 +188,7 @@ contract SimpleDNSContract with Deployable, OwnableTransferable, DNSResolver {
             bounce: false,
             to: sender(),
             value: 0,
-            mode: SendRemainingBalance, 
+            mode: SendRemainingBalance + SendDestroyIfZero, 
             body: "Contract destroyed".asComment()
         });
     }

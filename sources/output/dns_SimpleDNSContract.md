@@ -1,6 +1,6 @@
 # TACT Compilation Report
 Contract: SimpleDNSContract
-BOC Size: 3537 bytes
+BOC Size: 3538 bytes
 
 # Types
 Total Types: 18

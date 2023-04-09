@@ -1488,7 +1488,7 @@ PROGRAM{
     FALSE
     __tact_context_get_sender INLINECALLDICT
     0 PUSHINT
-    7 PUSHPOW2
+    160 PUSHINT
     B{b5ee9c7241010101001800002c00000000436f6e74726163742064657374726f79656454dbd534} B>boc PUSHREF
     $SendParameters$_constructor_bounce_to_value_mode_body INLINECALLDICT
     $global_send INLINECALLDICT
