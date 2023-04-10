@@ -12,7 +12,7 @@ message EventSubdomainAdded { domain: String; address: Address; }
 message EventSubdomainRemoved { domain: String; }
 message EventSubdomainUpdated { domain: String; oldAddress: Address; newAddress: Address; }
 
-struct DNSRecord { name: String; categories: map<Int, Cell>; }
+struct DNSRecord { name: String; categories: map<Int as uint256, Cell>; }
 struct Permissions { canAdd: Bool; canRemove: Bool; canReplace: Bool; }
 
 @interface("org.tact-lang.contract.dns.v0")
@@ -21,8 +21,8 @@ contract SimpleDNSContract with Deployable, FactoryDeployable, OwnableTransferab
 
     owner: Address;
     permissions: Permissions;
-    records: map<Int, DNSRecord>;
-    subdomains: map<Int, Address>;
+    records: map<Int as uint256, DNSRecord>;
+    subdomains: map<Int as uint256, Address>;
 
     init(owner: Address, seed: Int /* Unused */) {
         self.owner = owner;
@@ -250,15 +250,19 @@ contract SimpleDNSContract with Deployable, FactoryDeployable, OwnableTransferab
             return DNSResolveResult { prefix: totalBits, record: (record!!).categories.asCell() };
         }
         let cat: Cell? = (record!!).categories.get(category);
-        return DNSResolveResult { prefix: totalBits, record: null };
+        return DNSResolveResult { prefix: totalBits, record: cat };
     }
 
     //
     // Getters
     //
 
-    get fun records(): map<Int, DNSRecord> {
+    get fun records(): map<Int as uint256, DNSRecord> {
         return self.records;
+    }
+
+    get fun subdomains(): map<Int as uint256, Address> {
+        return self.subdomains;
     }
 
     get fun permissions(): Permissions {

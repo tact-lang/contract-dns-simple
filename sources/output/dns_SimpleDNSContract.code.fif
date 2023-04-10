@@ -8,10 +8,10 @@ PROGRAM{
   DECLPROC __tact_context_get
   DECLPROC __tact_context_get_sender
   DECLPROC __tact_store_bool
-  DECLPROC __tact_dict_set_int_cell
-  DECLPROC __tact_dict_get_int_cell
-  DECLPROC __tact_dict_set_int_slice
-  DECLPROC __tact_dict_get_int_slice
+  DECLPROC __tact_dict_set_uint_cell
+  DECLPROC __tact_dict_get_uint_cell
+  DECLPROC __tact_dict_set_uint_slice
+  DECLPROC __tact_dict_get_uint_slice
   DECLPROC __tact_slice_eq_bits
   DECLPROC $Deploy$_load
   DECLPROC $DeployOk$_store
@@ -63,6 +63,7 @@ PROGRAM{
   DECLPROC $SimpleDNSContract$_fun_resolveByKey
   DECLPROC $SimpleDNSContract$_fun_doResolveDNS
   DECLPROC $SimpleDNSContract$_fun_records
+  DECLPROC $SimpleDNSContract$_fun_subdomains
   DECLPROC $SimpleDNSContract$_fun_permissions
   DECLPROC $SendParameters$_constructor_bounce_to_value_mode_body
   DECLPROC $SimpleDNSContract$_fun_forward
@@ -93,6 +94,7 @@ PROGRAM{
   DECLPROC $SimpleDNSContract$_internal_binary_FactoryDeploy
   DECLPROC $SimpleDNSContract$_internal_binary_ChangeOwner
   114139 DECLMETHOD %records
+  76907 DECLMETHOD %subdomains
   73541 DECLMETHOD %permissions
   83229 DECLMETHOD %owner
   123660 DECLMETHOD %dnsresolve
@@ -163,22 +165,22 @@ PROGRAM{
     SWAP
     1 STI
   }>
-  __tact_dict_set_int_cell PROCINLINE:<{
+  __tact_dict_set_uint_cell PROCINLINE:<{
     DUP
     ISNULL
     IF:<{
       DROP
       -ROT
-      DICTIDEL
+      DICTUDEL
       DROP
     }>ELSE<{
       s1 s3 s3 XCHG3
-      DICTISETREF
+      DICTUSETREF
     }>
   }>
-  __tact_dict_get_int_cell PROCINLINE:<{
+  __tact_dict_get_uint_cell PROCINLINE:<{
     -ROT
-    DICTIGETREF
+    DICTUGETREF
     NULLSWAPIFNOT
     IF:<{
     }>ELSE<{
@@ -186,22 +188,22 @@ PROGRAM{
       PUSHNULL
     }>
   }>
-  __tact_dict_set_int_slice PROCINLINE:<{
+  __tact_dict_set_uint_slice PROCINLINE:<{
     DUP
     ISNULL
     IF:<{
       DROP
       -ROT
-      DICTIDEL
+      DICTUDEL
       DROP
     }>ELSE<{
       s1 s3 s3 XCHG3
-      DICTISET
+      DICTUSET
     }>
   }>
-  __tact_dict_get_int_slice PROCINLINE:<{
+  __tact_dict_get_uint_slice PROCINLINE:<{
     -ROT
-    DICTIGET
+    DICTUGET
     NULLSWAPIFNOT
     IF:<{
     }>ELSE<{
@@ -722,9 +724,9 @@ PROGRAM{
   $DNSResolveResult$_constructor_prefix_record PROCINLINE:<{
   }>
   $SimpleDNSContract$_fun_resolveByKey PROCREF:<{
-    257 PUSHINT
+    8 PUSHPOW2
     s5 s0 s2 PUXC2
-    __tact_dict_get_int_cell INLINECALLDICT
+    __tact_dict_get_uint_cell INLINECALLDICT
     $DNSRecord$_load_opt INLINECALLDICT
     DUP
     ISNULL
@@ -735,14 +737,17 @@ PROGRAM{
     }>
     OVER
     0 EQINT
-    1 2 BLKDROP2
     IFJMP:<{
+      NIP
       $DNSRecord$_not_null INLINECALLDICT
       $DNSRecord$_get_categories INLINECALLDICT
       $DNSResolveResult$_constructor_prefix_record INLINECALLDICT
     }>
-    DROP
-    PUSHNULL
+    $DNSRecord$_not_null INLINECALLDICT
+    $DNSRecord$_get_categories INLINECALLDICT
+    8 PUSHPOW2
+    ROT
+    __tact_dict_get_uint_cell INLINECALLDICT
     $DNSResolveResult$_constructor_prefix_record INLINECALLDICT
   }>
   $SimpleDNSContract$_fun_doResolveDNS PROCREF:<{
@@ -772,12 +777,12 @@ PROGRAM{
     }>
     OVER
     $global_dnsExtractTopDomain INLINECALLDICT
-    257 PUSHINT
+    8 PUSHPOW2
     OVER
     HASHSU
     s5 PUSH
     -ROT
-    __tact_dict_get_int_slice INLINECALLDICT
+    __tact_dict_get_uint_slice INLINECALLDICT
     DUP
     ISNULL
     NOT
@@ -813,6 +818,9 @@ PROGRAM{
   }>
   $SimpleDNSContract$_fun_records PROCREF:<{
     OVER
+  }>
+  $SimpleDNSContract$_fun_subdomains PROCREF:<{
+    DUP
   }>
   $SimpleDNSContract$_fun_permissions PROCREF:<{
     s4 s3 s2 PUSH3
@@ -1261,9 +1269,9 @@ PROGRAM{
     __tact_not_null INLINECALLDICT
     HASHSU
     OVER
-    257 PUSHINT
+    8 PUSHPOW2
     s2 PUSH
-    __tact_dict_get_int_slice INLINECALLDICT
+    __tact_dict_get_uint_slice INLINECALLDICT
     DUP
     ISNULL
     NOT
@@ -1279,11 +1287,11 @@ PROGRAM{
       21519 PUSHINT
       s4 PUSH
       THROWANYIFNOT
-      257 PUSHINT
+      8 PUSHPOW2
       ROT
       s0 s7 XCHG
       PUSHNULL
-      __tact_dict_set_int_slice INLINECALLDICT
+      __tact_dict_set_uint_slice INLINECALLDICT
       s0 s6 XCHG
       $EventSubdomainRemoved$_constructor_domain INLINECALLDICT
       $EventSubdomainRemoved$_store_cell INLINECALLDICT
@@ -1309,9 +1317,9 @@ PROGRAM{
         43961 PUSHINT
         s6 PUSH
         THROWANYIFNOT
-        257 PUSHINT
+        8 PUSHPOW2
         s1 s8 XCPU
-        __tact_dict_set_int_slice INLINECALLDICT
+        __tact_dict_set_uint_slice INLINECALLDICT
         s0 s6 XCHG
         __tact_not_null INLINECALLDICT
         s1 s7 XCHG
@@ -1339,9 +1347,9 @@ PROGRAM{
         s5 PUSH
         THROWANYIFNOT
         s1 s2 XCHG
-        257 PUSHINT
+        8 PUSHPOW2
         s0 s3 s9 XC2PU
-        __tact_dict_set_int_slice INLINECALLDICT
+        __tact_dict_set_uint_slice INLINECALLDICT
         SWAP
         __tact_not_null INLINECALLDICT
         s0 s7 XCHG
@@ -1379,9 +1387,9 @@ PROGRAM{
       __tact_not_null INLINECALLDICT
       HASHSU
       s2 PUSH
-      257 PUSHINT
+      8 PUSHPOW2
       s2 PUSH
-      __tact_dict_get_int_cell INLINECALLDICT
+      __tact_dict_get_uint_cell INLINECALLDICT
       $DNSRecord$_load_opt INLINECALLDICT
       DUP
       ISNULL
@@ -1389,9 +1397,9 @@ PROGRAM{
       IF:<{
         $DNSRecord$_not_null INLINECALLDICT
         DUP
-        257 PUSHINT
+        8 PUSHPOW2
         s12 PUSH
-        __tact_dict_get_int_cell INLINECALLDICT
+        __tact_dict_get_uint_cell INLINECALLDICT
         DUP
         ISNULL
         NOT
@@ -1408,16 +1416,16 @@ PROGRAM{
           s6 PUSH
           THROWANYIFNOT
           s0 s8 XCHG
-          257 PUSHINT
+          8 PUSHPOW2
           s10 PUSH
           PUSHNULL
-          __tact_dict_set_int_cell INLINECALLDICT
+          __tact_dict_set_uint_cell INLINECALLDICT
           s0 s8 XCHG
-          257 PUSHINT
+          8 PUSHPOW2
           s0 s9 XCHG
           $DNSRecord$_store_cell INLINECALLDICT
           s2 s8 XCHG
-          __tact_dict_set_int_cell INLINECALLDICT
+          __tact_dict_set_uint_cell INLINECALLDICT
           s7 s6 XCHG2
           $EventRecordRemoved$_constructor_domain_category INLINECALLDICT
           $EventRecordRemoved$_store_cell INLINECALLDICT
@@ -1443,16 +1451,16 @@ PROGRAM{
           s7 PUSH
           THROWANYIFNOT
           SWAP
-          257 PUSHINT
+          8 PUSHPOW2
           s12 s11 PUSH2
-          __tact_dict_set_int_cell INLINECALLDICT
+          __tact_dict_set_uint_cell INLINECALLDICT
           s0 s2 XCHG
-          257 PUSHINT
+          8 PUSHPOW2
           s0 s3 XCHG
           $DNSRecord$_store_cell INLINECALLDICT
           s1 s5 XCHG
           s1 s3 XCHG
-          __tact_dict_set_int_cell INLINECALLDICT
+          __tact_dict_set_uint_cell INLINECALLDICT
           s0 s2 XCHG
           __tact_not_null INLINECALLDICT
           s0 s7 XCHG
@@ -1480,16 +1488,16 @@ PROGRAM{
           43961 PUSHINT
           s8 PUSH
           THROWANYIFNOT
-          257 PUSHINT
+          8 PUSHPOW2
           s11 s10 PUSH2
-          __tact_dict_set_int_cell INLINECALLDICT
+          __tact_dict_set_uint_cell INLINECALLDICT
           SWAP
-          257 PUSHINT
+          8 PUSHPOW2
           s0 s2 XCHG
           $DNSRecord$_store_cell INLINECALLDICT
           s3 s4 XCHG
           s1 s2 XCHG
-          __tact_dict_set_int_cell INLINECALLDICT
+          __tact_dict_set_uint_cell INLINECALLDICT
           s0 s6 XCHG
           __tact_not_null INLINECALLDICT
           s8 s7 s0 XCHG3
@@ -1519,16 +1527,16 @@ PROGRAM{
           s9 PUSH
           PUSHNULL
           $DNSRecord$_constructor_name_categories INLINECALLDICT
-          257 PUSHINT
+          8 PUSHPOW2
           s11 s10 PUSH2
-          __tact_dict_set_int_cell INLINECALLDICT
+          __tact_dict_set_uint_cell INLINECALLDICT
           SWAP
-          257 PUSHINT
+          8 PUSHPOW2
           s0 s2 XCHG
           $DNSRecord$_store_cell INLINECALLDICT
           s3 s4 XCHG
           s1 s2 XCHG
-          __tact_dict_set_int_cell INLINECALLDICT
+          __tact_dict_set_uint_cell INLINECALLDICT
           s0 s6 XCHG
           __tact_not_null INLINECALLDICT
           s8 s7 s0 XCHG3
@@ -1636,6 +1644,11 @@ PROGRAM{
     $SimpleDNSContract$_fun_records INLINECALLDICT
     6 1 BLKDROP2
   }>
+  %subdomains PROC:<{
+    $SimpleDNSContract$_contract_load INLINECALLDICT
+    $SimpleDNSContract$_fun_subdomains INLINECALLDICT
+    6 1 BLKDROP2
+  }>
   %permissions PROC:<{
     $SimpleDNSContract$_contract_load INLINECALLDICT
     $SimpleDNSContract$_fun_permissions INLINECALLDICT
@@ -1664,7 +1677,7 @@ PROGRAM{
     86142586315491086060343270784266291122 PUSHINT
   }>
   get_abi_ipfs PROC:<{
-    x{697066733a2f2f516d646e54547961413444736b73697972756653577667656b3466536f64754a35556a6462463536637139757a6e} PUSHSLICE
+    x{697066733a2f2f516d526d685974317276566b6f5a5832317978797353343457747453414a646e466e56766b417561376634637565} PUSHSLICE
   }>
   lazy_deployment_completed PROC:<{
     c4 PUSH

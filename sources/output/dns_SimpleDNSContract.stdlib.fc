@@ -53,17 +53,17 @@ builder __tact_store_bool(builder b, int v) inline {
     return b.store_int(v, 1);
 }
 
-(cell, ()) __tact_dict_set_int_cell(cell d, int kl, int k, cell v) inline {
+(cell, ()) __tact_dict_set_uint_cell(cell d, int kl, int k, cell v) inline {
     if (null?(v)) {
-        var (r, ok) = idict_delete?(d, kl, k);
+        var (r, ok) = udict_delete?(d, kl, k);
         return (r, ());
     } else {
-        return (idict_set_ref(d, kl, k, v), ());
+        return (udict_set_ref(d, kl, k, v), ());
     }
 }
 
-cell __tact_dict_get_int_cell(cell d, int kl, int k) inline {
-    var (r, ok) = idict_get_ref?(d, kl, k);
+cell __tact_dict_get_uint_cell(cell d, int kl, int k) inline {
+    var (r, ok) = udict_get_ref?(d, kl, k);
     if (ok) {
         return r;
     } else {
@@ -71,17 +71,17 @@ cell __tact_dict_get_int_cell(cell d, int kl, int k) inline {
     }
 }
 
-(cell, ()) __tact_dict_set_int_slice(cell d, int kl, int k, slice v) inline {
+(cell, ()) __tact_dict_set_uint_slice(cell d, int kl, int k, slice v) inline {
     if (null?(v)) {
-        var (r, ok) = idict_delete?(d, kl, k);
+        var (r, ok) = udict_delete?(d, kl, k);
         return (r, ());
     } else {
-        return (idict_set(d, kl, k, v), ());
+        return (udict_set(d, kl, k, v), ());
     }
 }
 
-slice __tact_dict_get_int_slice(cell d, int kl, int k) inline {
-    var (r, ok) = idict_get?(d, kl, k);
+slice __tact_dict_get_uint_slice(cell d, int kl, int k) inline {
+    var (r, ok) = udict_get?(d, kl, k);
     if (ok) {
         return r;
     } else {

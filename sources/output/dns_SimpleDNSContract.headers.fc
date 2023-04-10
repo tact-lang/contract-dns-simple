@@ -30,17 +30,17 @@ slice __tact_context_get_sender() inline;
 ;; __tact_store_bool
 builder __tact_store_bool(builder b, int v) inline;
 
-;; __tact_dict_set_int_cell
-(cell, ()) __tact_dict_set_int_cell(cell d, int kl, int k, cell v) inline;
+;; __tact_dict_set_uint_cell
+(cell, ()) __tact_dict_set_uint_cell(cell d, int kl, int k, cell v) inline;
 
-;; __tact_dict_get_int_cell
-cell __tact_dict_get_int_cell(cell d, int kl, int k) inline;
+;; __tact_dict_get_uint_cell
+cell __tact_dict_get_uint_cell(cell d, int kl, int k) inline;
 
-;; __tact_dict_set_int_slice
-(cell, ()) __tact_dict_set_int_slice(cell d, int kl, int k, slice v) inline;
+;; __tact_dict_set_uint_slice
+(cell, ()) __tact_dict_set_uint_slice(cell d, int kl, int k, slice v) inline;
 
-;; __tact_dict_get_int_slice
-slice __tact_dict_get_int_slice(cell d, int kl, int k) inline;
+;; __tact_dict_get_uint_slice
+slice __tact_dict_get_uint_slice(cell d, int kl, int k) inline;
 
 ;; __tact_slice_eq_bits
 int __tact_slice_eq_bits(slice a, slice b) inline;
@@ -194,6 +194,9 @@ cell $global_dnsResolveNext(slice $address) impure inline_ref;
 
 ;; $SimpleDNSContract$_fun_records
 ((slice, (int, int, int), cell, cell), cell) $SimpleDNSContract$_fun_records((slice, (int, int, int), cell, cell) $self) impure inline_ref;
+
+;; $SimpleDNSContract$_fun_subdomains
+((slice, (int, int, int), cell, cell), cell) $SimpleDNSContract$_fun_subdomains((slice, (int, int, int), cell, cell) $self) impure inline_ref;
 
 ;; $SimpleDNSContract$_fun_permissions
 ((slice, (int, int, int), cell, cell), (int, int, int)) $SimpleDNSContract$_fun_permissions((slice, (int, int, int), cell, cell) $self) impure inline_ref;

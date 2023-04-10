@@ -1,6 +1,6 @@
 # TACT Compilation Report
 Contract: SimpleDNSContract
-BOC Size: 3598 bytes
+BOC Size: 3610 bytes
 
 # Types
 Total Types: 20
@@ -78,17 +78,19 @@ TLB: `event_subdomain_updated#ab7c80bd domain:^string oldAddress:address newAddr
 Signature: `EventSubdomainUpdated{domain:^string,oldAddress:address,newAddress:address}`
 
 ## DNSRecord
-TLB: `_ name:^string categories:dict<int, ^cell> = DNSRecord`
-Signature: `DNSRecord{name:^string,categories:dict<int, ^cell>}`
+TLB: `_ name:^string categories:dict<uint256, ^cell> = DNSRecord`
+Signature: `DNSRecord{name:^string,categories:dict<uint256, ^cell>}`
 
 ## Permissions
 TLB: `_ canAdd:bool canRemove:bool canReplace:bool = Permissions`
 Signature: `Permissions{canAdd:bool,canRemove:bool,canReplace:bool}`
 
 # Get Methods
-Total Get Methods: 4
+Total Get Methods: 5
 
 ## records
+
+## subdomains
 
 ## permissions
 

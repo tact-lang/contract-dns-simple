@@ -78,8 +78,8 @@ TLB: `event_subdomain_updated#ab7c80bd domain:^string oldAddress:address newAddr
 Signature: `EventSubdomainUpdated{domain:^string,oldAddress:address,newAddress:address}`
 
 ## DNSRecord
-TLB: `_ name:^string categories:dict<int, ^cell> = DNSRecord`
-Signature: `DNSRecord{name:^string,categories:dict<int, ^cell>}`
+TLB: `_ name:^string categories:dict<uint256, ^cell> = DNSRecord`
+Signature: `DNSRecord{name:^string,categories:dict<uint256, ^cell>}`
 
 ## Permissions
 TLB: `_ canAdd:bool canRemove:bool canReplace:bool = Permissions`

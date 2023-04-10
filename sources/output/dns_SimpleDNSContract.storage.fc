@@ -316,7 +316,7 @@ cell $EventSubdomainUpdated$_store_cell((slice, slice, slice) v) inline {
 
 ;;
 ;; Type: DNSRecord
-;; TLB: _ name:^string categories:dict<int, ^cell> = DNSRecord
+;; TLB: _ name:^string categories:dict<uint256, ^cell> = DNSRecord
 ;;
 
 builder $DNSRecord$_store(builder build_0, (slice, cell) v) inline {
