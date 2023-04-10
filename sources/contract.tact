@@ -15,14 +15,16 @@ message EventSubdomainUpdated { domain: String; oldAddress: Address; newAddress:
 struct DNSRecord { name: String; categories: map<Int, Cell>; }
 struct Permissions { canAdd: Bool; canRemove: Bool; canReplace: Bool; }
 
-contract SimpleDNSContract with Deployable, OwnableTransferable, DNSResolver {
+@interface("org.tact-lang.contract.dns.v0")
+contract SimpleDNSContract with Deployable, FactoryDeployable, OwnableTransferable, DNSResolver {
+    override const storageReserve: Int = ton("0.1");
 
     owner: Address;
     permissions: Permissions;
     records: map<Int, DNSRecord>;
     subdomains: map<Int, Address>;
 
-    init(owner: Address) {
+    init(owner: Address, seed: Int /* Unused */) {
         self.owner = owner;
         self.records = emptyMap();
         self.permissions = Permissions { canAdd: true, canRemove: true, canReplace: true };
@@ -221,7 +223,7 @@ contract SimpleDNSContract with Deployable, OwnableTransferable, DNSResolver {
     // Resolver
     //
 
-    overrides fun doResolveDNS(subdomain: Slice, category: Int): DNSResolveResult {
+    override fun doResolveDNS(subdomain: Slice, category: Int): DNSResolveResult {
         
         // Self-domain resolving
         if (subdomain.bits() == 0) {
@@ -252,21 +254,6 @@ contract SimpleDNSContract with Deployable, OwnableTransferable, DNSResolver {
     }
 
     //
-    // Storage
-    //
-
-    overrides inline fun reply(body: Cell?) {
-        nativeReserve(ton("1"), 0);
-        send(SendParameters{
-            bounce: true,
-            to: sender(),
-            value: 0,
-            mode: SendRemainingBalance + SendIgnoreErrors, 
-            body: body
-        });
-    }
-
-    //
     // Getters
     //
 
@@ -276,5 +263,31 @@ contract SimpleDNSContract with Deployable, OwnableTransferable, DNSResolver {
 
     get fun permissions(): Permissions {
         return self.permissions;
+    }
+}
+
+contract SimpleDNSFactory with Deployable {
+    override const storageReserve: Int = ton("0.1");
+    counter: Int as uint64;
+
+    init() {
+        self.counter = 0;
+    }
+
+    receive("Deploy") {
+        self.counter = self.counter + 1;
+        let init: StateInit = initOf SimpleDNSContract(sender(), self.counter);
+        let address: Address = contractAddress(init);
+
+        nativeReserve(self.storageReserve, 0);
+        send(SendParameters{
+            bounce: false,
+            to: address,
+            value: 0,
+            mode: SendRemainingBalance + SendIgnoreErrors,
+            code: init.code,
+            data: init.data,
+            body: FactoryDeploy{ queryId: self.counter, cashback: sender() }.toCell()
+        });
     }
 }

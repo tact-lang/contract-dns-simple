@@ -15,22 +15,29 @@ slice __tact_verify_address(slice address) inline {
     return address;
 }
 
-(slice, slice) __tact_load_address(slice cs) inline {
-    slice raw = cs~load_msg_addr();
-    return (cs, __tact_verify_address(raw));
-}
-
-(slice, slice) __tact_load_address_opt(slice cs) inline {
-    slice raw = cs~load_msg_addr();
-    if (raw.preload_uint(2) != 0) {
-        return (cs, __tact_verify_address(raw));
-    } else {
-        return (cs, null());
-    }
-}
-
 builder __tact_store_address(builder b, slice address) inline {
     return b.store_slice(__tact_verify_address(address));
+}
+
+slice __tact_create_address(int chain, int hash) inline {
+    var b = begin_cell();
+    b = b.store_uint(2, 2);
+    b = b.store_uint(0, 1);
+    b = b.store_int(chain, 8);
+    b = b.store_uint(hash, 256);
+    var addr = b.end_cell().begin_parse();
+    return __tact_verify_address(addr);
+}
+
+slice __tact_compute_contract_address(int chain, cell code, cell data) inline {
+    var b = begin_cell();
+    b = b.store_uint(0, 2);
+    b = b.store_uint(3, 2);
+    b = b.store_uint(0, 1);
+    b = b.store_ref(code);
+    b = b.store_ref(data);
+    var hash = cell_hash(b.end_cell());
+    return __tact_create_address(chain, hash);
 }
 
 int __tact_my_balance() inline {
@@ -53,49 +60,20 @@ builder __tact_store_bool(builder b, int v) inline {
     return b.store_int(v, 1);
 }
 
-(cell, ()) __tact_dict_set_int_cell(cell d, int kl, int k, cell v) inline {
-    if (null?(v)) {
-        var (r, ok) = idict_delete?(d, kl, k);
-        return (r, ());
-    } else {
-        return (idict_set_ref(d, kl, k, v), ());
-    }
+cell __tact_dict_set_code(cell dict, int id, cell code) inline {
+    return udict_set_ref(dict, 16, id, code);
 }
 
-cell __tact_dict_get_int_cell(cell d, int kl, int k) inline {
-    var (r, ok) = idict_get_ref?(d, kl, k);
-    if (ok) {
-        return r;
-    } else {
-        return null();
-    }
+cell __tact_dict_get_code(cell dict, int id) inline {
+    var (data, ok) = udict_get_ref?(dict, 16, id);
+    throw_unless(135, ok);
+    return data;
 }
 
-(cell, ()) __tact_dict_set_int_slice(cell d, int kl, int k, slice v) inline {
-    if (null?(v)) {
-        var (r, ok) = idict_delete?(d, kl, k);
-        return (r, ());
-    } else {
-        return (idict_set(d, kl, k, v), ());
-    }
+slice $global_contractAddress((cell, cell) $s) impure inline {
+    var (($s'code, $s'data)) = $s;
+    return __tact_compute_contract_address(0, $s'code, $s'data);
 }
-
-slice __tact_dict_get_int_slice(cell d, int kl, int k) inline {
-    var (r, ok) = idict_get?(d, kl, k);
-    if (ok) {
-        return r;
-    } else {
-        return null();
-    }
-}
-
-int __tact_slice_eq_bits(slice a, slice b) inline {
-    return equal_slice_bits(a, b);
-}
-
-forall X0, X1 -> tuple __tact_tuple_create_2((X0, X1) v) asm "2 TUPLE";
-
-forall X0, X1 -> (X0, X1) __tact_tuple_destroy_2(tuple v) asm "2 UNTUPLE";
 
 () $global_send((int, slice, int, int, cell, cell, cell) $params) impure inline_ref {
     var (($params'bounce, $params'to, $params'value, $params'mode, $params'body, $params'code, $params'data)) = $params;
@@ -140,13 +118,8 @@ forall X0, X1 -> (X0, X1) __tact_tuple_destroy_2(tuple v) asm "2 UNTUPLE";
     send_raw_message($c, $params'mode);
 }
 
-() $global_emit(cell $body) impure inline {
-    cell $c = end_cell(store_ref(store_uint(begin_cell(), 15211807202738752817960438464513, 104), $body));
-    send_raw_message($c, 0);
-}
-
-((slice, (int, int, int), cell, cell), ()) $SimpleDNSContract$_fun_forward((slice, (int, int, int), cell, cell) $self, slice $to, cell $body) impure inline_ref {
-    var (($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains)) = $self;
+((int), ()) $SimpleDNSFactory$_fun_forward((int) $self, slice $to, cell $body) impure inline_ref {
+    var (($self'counter)) = $self;
     if ((100000000 > 0)) {
         var ($ctx'bounced, $ctx'sender, $ctx'value, $ctx'raw) = __tact_context_get();
         int $balance = __tact_my_balance();
@@ -154,15 +127,15 @@ forall X0, X1 -> (X0, X1) __tact_tuple_destroy_2(tuple v) asm "2 UNTUPLE";
         if (($balanceBeforeMessage < 100000000)) {
             raw_reserve(100000000, 0);
             $global_send($SendParameters$_constructor_bounce_to_value_mode_body(true, $to, 0, (128 + 2), $body));
-            return (($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains), ());
+            return (($self'counter), ());
         }
     }
     $global_send($SendParameters$_constructor_bounce_to_value_mode_body(true, $to, 0, (64 + 2), $body));
-    return (($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains), ());
+    return (($self'counter), ());
 }
 
-((slice, (int, int, int), cell, cell), ()) $SimpleDNSContract$_fun_reply((slice, (int, int, int), cell, cell) $self, cell $body) impure inline {
-    var (($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains)) = $self;
-    ($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains)~$SimpleDNSContract$_fun_forward(__tact_context_get_sender(), $body);
-    return (($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains), ());
+((int), ()) $SimpleDNSFactory$_fun_reply((int) $self, cell $body) impure inline {
+    var (($self'counter)) = $self;
+    ($self'counter)~$SimpleDNSFactory$_fun_forward(__tact_context_get_sender(), $body);
+    return (($self'counter), ());
 }

@@ -1,0 +1,131 @@
+;;
+;; Type: SendParameters
+;; TLB: _ bounce:bool to:address value:int257 mode:int257 body:Maybe ^cell code:Maybe ^cell data:Maybe ^cell = SendParameters
+;;
+
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_bounce_to_value_mode_body(int bounce, slice to, int value, int mode, cell body) inline {
+    return (bounce, to, value, mode, body, null(), null());
+}
+
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_bounce_to_value_mode_code_data_body(int bounce, slice to, int value, int mode, cell code, cell data, cell body) inline {
+    return (bounce, to, value, mode, body, code, data);
+}
+
+;;
+;; Type: Deploy
+;; Header: 0x946a98b6
+;; TLB: deploy#946a98b6 queryId:uint64 = Deploy
+;;
+
+(slice, ((int))) $Deploy$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 2490013878);
+    var v'queryId = sc_0~load_uint(64);
+    return (sc_0, (v'queryId));
+}
+
+;;
+;; Type: DeployOk
+;; Header: 0xaff90f57
+;; TLB: deploy_ok#aff90f57 queryId:uint64 = DeployOk
+;;
+
+builder $DeployOk$_store(builder build_0, (int) v) inline {
+    var (v'queryId) = v;
+    build_0 = store_uint(build_0, 2952335191, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    return build_0;
+}
+
+cell $DeployOk$_store_cell((int) v) inline {
+    return $DeployOk$_store(begin_cell(), v).end_cell();
+}
+
+((int)) $DeployOk$_constructor_queryId(int queryId) inline {
+    return (queryId);
+}
+
+;;
+;; Type: FactoryDeploy
+;; Header: 0x6d0ff13b
+;; TLB: factory_deploy#6d0ff13b queryId:uint64 cashback:address = FactoryDeploy
+;;
+
+builder $FactoryDeploy$_store(builder build_0, (int, slice) v) inline {
+    var (v'queryId, v'cashback) = v;
+    build_0 = store_uint(build_0, 1829761339, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    build_0 = __tact_store_address(build_0, v'cashback);
+    return build_0;
+}
+
+cell $FactoryDeploy$_store_cell((int, slice) v) inline {
+    return $FactoryDeploy$_store(begin_cell(), v).end_cell();
+}
+
+((int, slice)) $FactoryDeploy$_constructor_queryId_cashback(int queryId, slice cashback) inline {
+    return (queryId, cashback);
+}
+
+;;
+;; Type: SimpleDNSContract
+;;
+
+builder $SimpleDNSContract$init$_store(builder build_0, (slice, int) v) inline {
+    var (v'owner, v'seed) = v;
+    build_0 = __tact_store_address(build_0, v'owner);
+    build_0 = build_0.store_int(v'seed, 257);
+    return build_0;
+}
+
+(cell, cell) $SimpleDNSContract$_init_child(cell sys', slice $owner, int $seed) inline_ref {
+    slice sc' = sys'.begin_parse();
+    cell source = sc'~load_dict();
+    cell contracts = new_dict();
+    
+    ;; Contract Code: SimpleDNSContract
+    cell mine = __tact_dict_get_code(source, 25983);
+    contracts = __tact_dict_set_code(contracts, 25983, mine);
+    
+    ;; Build cell
+    builder b = begin_cell();
+    b = b.store_ref(begin_cell().store_dict(contracts).end_cell());
+    b = b.store_int(false, 1);
+    b = $SimpleDNSContract$init$_store(b, ($owner, $seed));
+    return (mine, b.end_cell());
+}
+
+;;
+;; Type: SimpleDNSFactory
+;;
+
+builder $SimpleDNSFactory$_store(builder build_0, (int) v) inline {
+    var (v'counter) = v;
+    build_0 = build_0.store_uint(v'counter, 64);
+    return build_0;
+}
+
+(slice, ((int))) $SimpleDNSFactory$_load(slice sc_0) inline {
+    var v'counter = sc_0~load_uint(64);
+    return (sc_0, (v'counter));
+}
+
+(int) $SimpleDNSFactory$_contract_load() impure inline_ref {
+    slice $sc = get_data().begin_parse();
+    __tact_context_sys = $sc~load_ref();
+    int $loaded = $sc~load_int(1);
+    if ($loaded) {
+        return $sc~$SimpleDNSFactory$_load();
+    } else {
+        ;; Allow only workchain deployments
+        throw_unless(137, my_address().preload_uint(11) == 1024);
+        return $SimpleDNSFactory$_contract_init();
+    }
+}
+
+() $SimpleDNSFactory$_contract_store((int) v) impure inline {
+    builder b = begin_cell();
+    b = b.store_ref(__tact_context_sys);
+    b = b.store_int(true, 1);
+    b = $SimpleDNSFactory$_store(b, v);
+    set_data(b.end_cell());
+}

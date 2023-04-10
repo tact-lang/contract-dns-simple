@@ -15,8 +15,14 @@ slice __tact_verify_address(slice address) inline;
 ;; __tact_store_address
 builder __tact_store_address(builder b, slice address) inline;
 
+;; __tact_my_balance
+int __tact_my_balance() inline;
+
 ;; __tact_not_null
 forall X -> X __tact_not_null(X x) inline;
+
+;; __tact_context_get
+(int, slice, int, slice) __tact_context_get() inline;
 
 ;; __tact_context_get_sender
 slice __tact_context_get_sender() inline;
@@ -48,8 +54,17 @@ builder $DeployOk$_store(builder build_0, (int) v) inline;
 ;; $DeployOk$_store_cell
 cell $DeployOk$_store_cell((int) v) inline;
 
+;; $FactoryDeploy$_load
+(slice, ((int, slice))) $FactoryDeploy$_load(slice sc_0) inline;
+
 ;; $ChangeOwner$_load
-(slice, ((slice))) $ChangeOwner$_load(slice sc_0) inline;
+(slice, ((int, slice))) $ChangeOwner$_load(slice sc_0) inline;
+
+;; $ChangeOwnerOk$_store
+builder $ChangeOwnerOk$_store(builder build_0, (int, slice) v) inline;
+
+;; $ChangeOwnerOk$_store_cell
+cell $ChangeOwnerOk$_store_cell((int, slice) v) inline;
 
 ;; $UpdateRecord$_load
 (slice, ((slice, int, cell))) $UpdateRecord$_load(slice sc_0) inline;
@@ -139,13 +154,13 @@ _ $DNSRecord$_get_categories((slice, cell) v) inline;
 (int, int, int) $Permissions$_to_external(((int, int, int)) v) inline;
 
 ;; $SimpleDNSContract$init$_load
-(slice, ((slice))) $SimpleDNSContract$init$_load(slice sc_0) inline;
+(slice, ((slice, int))) $SimpleDNSContract$init$_load(slice sc_0) inline;
 
 ;; $Permissions$_constructor_canAdd_canRemove_canReplace
 ((int, int, int)) $Permissions$_constructor_canAdd_canRemove_canReplace(int canAdd, int canRemove, int canReplace) inline;
 
 ;; $SimpleDNSContract$_contract_init
-(slice, (int, int, int), cell, cell) $SimpleDNSContract$_contract_init(slice $owner) impure inline_ref;
+(slice, (int, int, int), cell, cell) $SimpleDNSContract$_contract_init(slice $owner, int $seed) impure inline_ref;
 
 ;; $SimpleDNSContract$_contract_load
 (slice, (int, int, int), cell, cell) $SimpleDNSContract$_contract_load() impure inline_ref;
@@ -177,17 +192,20 @@ cell $global_dnsResolveNext(slice $address) impure inline_ref;
 ;; $SimpleDNSContract$_fun_doResolveDNS
 ((slice, (int, int, int), cell, cell), (int, cell)) $SimpleDNSContract$_fun_doResolveDNS((slice, (int, int, int), cell, cell) $self, slice $subdomain, int $category) impure inline_ref;
 
-;; $SendParameters$_constructor_bounce_to_value_mode_body
-((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_bounce_to_value_mode_body(int bounce, slice to, int value, int mode, cell body) inline;
-
-;; $SimpleDNSContract$_fun_reply
-((slice, (int, int, int), cell, cell), ()) $SimpleDNSContract$_fun_reply((slice, (int, int, int), cell, cell) $self, cell $body) impure inline;
-
 ;; $SimpleDNSContract$_fun_records
 ((slice, (int, int, int), cell, cell), cell) $SimpleDNSContract$_fun_records((slice, (int, int, int), cell, cell) $self) impure inline_ref;
 
 ;; $SimpleDNSContract$_fun_permissions
 ((slice, (int, int, int), cell, cell), (int, int, int)) $SimpleDNSContract$_fun_permissions((slice, (int, int, int), cell, cell) $self) impure inline_ref;
+
+;; $SendParameters$_constructor_bounce_to_value_mode_body
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_bounce_to_value_mode_body(int bounce, slice to, int value, int mode, cell body) inline;
+
+;; $SimpleDNSContract$_fun_forward
+((slice, (int, int, int), cell, cell), ()) $SimpleDNSContract$_fun_forward((slice, (int, int, int), cell, cell) $self, slice $to, cell $body) impure inline_ref;
+
+;; $SimpleDNSContract$_fun_reply
+((slice, (int, int, int), cell, cell), ()) $SimpleDNSContract$_fun_reply((slice, (int, int, int), cell, cell) $self, cell $body) impure inline;
 
 ;; $SimpleDNSContract$_fun_requireOwner
 ((slice, (int, int, int), cell, cell), ()) $SimpleDNSContract$_fun_requireOwner((slice, (int, int, int), cell, cell) $self) impure inline_ref;
@@ -224,3 +242,6 @@ cell $global_dnsResolveNext(slice $address) impure inline_ref;
 
 ;; $DeployOk$_constructor_queryId
 ((int)) $DeployOk$_constructor_queryId(int queryId) inline;
+
+;; $ChangeOwnerOk$_constructor_queryId_newOwner
+((int, slice)) $ChangeOwnerOk$_constructor_queryId_newOwner(int queryId, slice newOwner) inline;

@@ -1,6 +1,6 @@
 # TACT Compilation Report
-Contract: SimpleDNSContract
-BOC Size: 3596 bytes
+Contract: SimpleDNSFactory
+BOC Size: 911 bytes
 
 # Types
 Total Types: 20
@@ -86,17 +86,7 @@ TLB: `_ canAdd:bool canRemove:bool canReplace:bool = Permissions`
 Signature: `Permissions{canAdd:bool,canRemove:bool,canReplace:bool}`
 
 # Get Methods
-Total Get Methods: 4
-
-## records
-
-## permissions
-
-## owner
-
-## dnsresolve
-Argument: subdomain
-Argument: category
+Total Get Methods: 0
 
 # Error Codes
 2: Stack undeflow
