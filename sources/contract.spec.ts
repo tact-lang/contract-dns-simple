@@ -7,7 +7,7 @@ describe("contract", () => {
     // Create ContractSystem and deploy contract
     let system = await ContractSystem.create();
     let owner = system.treasure("owner");
-    let contract = system.open(await SimpleDNSContract.fromInit(owner.address));
+    let contract = system.open(await SimpleDNSContract.fromInit(owner.address, 0n));
     system.name(contract.address, "main");
     await contract.send(owner, { value: toNano(1) }, { $$type: "Deploy", queryId: 0n });
     await system.run();
@@ -54,6 +54,62 @@ describe("contract", () => {
         "canRemove": false,
         "canReplace": false,
       }
+    `);
+  });
+
+  it("should bounce text message", async () => {
+    // Create ContractSystem and deploy contract
+    let system = await ContractSystem.create();
+    let owner = system.treasure("owner");
+    let contract = system.open(await SimpleDNSContract.fromInit(owner.address, 0n));
+    system.name(contract.address, "main");
+    await contract.send(owner, { value: toNano(1) }, { $$type: "Deploy", queryId: 0n });
+    await system.run();
+
+    let track = system.track(contract);
+    await system.provider(contract).internal(owner, { value: toNano(1), body: "Test" });
+    await system.run();
+    expect(track.collect()).toMatchInlineSnapshot(`
+      [
+        {
+          "$seq": 1,
+          "events": [
+            {
+              "$type": "received",
+              "message": {
+                "body": {
+                  "text": "Test",
+                  "type": "text",
+                },
+                "bounce": true,
+                "from": "@treasure(owner)",
+                "to": "@main",
+                "type": "internal",
+                "value": 1000000000n,
+              },
+            },
+            {
+              "$type": "failed",
+              "errorCode": 130,
+              "errorMessage": "Invalid incoming message",
+            },
+            {
+              "$type": "sent-bounced",
+              "message": {
+                "body": {
+                  "cell": "x{FFFFFFFF0000000054657374}",
+                  "type": "cell",
+                },
+                "bounce": false,
+                "from": "@main",
+                "to": "@treasure(owner)",
+                "type": "internal",
+                "value": 994120000n,
+              },
+            },
+          ],
+        },
+      ]
     `);
   });
 });
