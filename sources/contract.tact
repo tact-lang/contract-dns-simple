@@ -11,8 +11,15 @@ message EventRecordRemoved { domain: String; category: Int; }
 message EventSubdomainAdded { domain: String; address: Address; }
 message EventSubdomainRemoved { domain: String; }
 
-struct DNSRecord { name: String; categories: map<Int, Cell>; }
-struct Permissions { canAdd: Bool; canRemove: Bool; canReplace: Bool; }
+struct DNSRecord { 
+    name: String; 
+    categories: map<Int, Cell>; 
+}
+struct Permissions { 
+    canAdd: Bool; 
+    canRemove: Bool; 
+    canReplace: Bool; 
+}
 
 contract SimpleDNSContract with Deployable, OwnableTransferable, DNSResolver {
 
@@ -56,7 +63,7 @@ contract SimpleDNSContract with Deployable, OwnableTransferable, DNSResolver {
                 emit(EventRecordRemoved{ domain: update.domain, category: update.category }.toCell());
 
                 // Reply
-                reply("Record removed".asComment());
+                self.reply("Record removed".asComment());
                 return;
             }
 
@@ -71,7 +78,7 @@ contract SimpleDNSContract with Deployable, OwnableTransferable, DNSResolver {
                 self.records.set(id, domain);
     
                 // Reply
-                reply("Record replaced".asComment());
+                self.reply("Record replaced".asComment());
                 return;
             }
 
@@ -86,7 +93,7 @@ contract SimpleDNSContract with Deployable, OwnableTransferable, DNSResolver {
                 self.records.set(id, domain);
     
                 // Reply
-                reply("Record added".asComment());
+                self.reply("Record added".asComment());
                 return;
             }
         } else {
@@ -102,41 +109,41 @@ contract SimpleDNSContract with Deployable, OwnableTransferable, DNSResolver {
                 self.records.set(id, domain);
     
                 // Reply
-                reply("Record added".asComment());
+                self.reply("Record added".asComment());
                 return;
             }
         }
 
         // Fallback
-        reply("Record not found".asComment());
+        self.reply("Record not found".asComment());
     }
 
     receive("burn canAdd") {
         self.requireOwner();
         require(self.permissions.canAdd, "Fuse already burned");
         self.permissions.canAdd = false;
-        reply("Fuse burned".asComment());
+        self.reply("Fuse burned".asComment());
     }
 
     receive("burn canRemove") {
         self.requireOwner();
         require(self.permissions.canRemove, "Fuse already burned");
         self.permissions.canRemove = false;
-        reply("Fuse burned".asComment());
+        self.reply("Fuse burned".asComment());
     }
 
     receive("burn canReplace") {
         self.requireOwner();
         require(self.permissions.canReplace, "Fuse already burned");
         self.permissions.canReplace = false;
-        reply("Fuse burned".asComment());
+        self.reply("Fuse burned".asComment());
     }
 
     //
     // Resolver
     //
 
-    overrides fun doResolveDNS(subdomain: Slice, category: Int): DNSResolveResult {
+    override fun doResolveDNS(subdomain: Slice, category: Int): DNSResolveResult {
         
         // Self-domain resolving
         if (subdomain.bits() == 0) {
@@ -154,6 +161,7 @@ contract SimpleDNSContract with Deployable, OwnableTransferable, DNSResolver {
         return self.resolveByKey(subdomain.bits(), subdomain.hash(), category);
     }
     
+
     fun resolveByKey(totalBits: Int, id: Int, category: Int): DNSResolveResult {
         let record: DNSRecord? = self.records.get(id);
         if (record == null) {
@@ -163,6 +171,7 @@ contract SimpleDNSContract with Deployable, OwnableTransferable, DNSResolver {
             return DNSResolveResult { prefix: totalBits, record: (record!!).categories.asCell() };
         }
         let cat: Cell? = (record!!).categories.get(category);
+        
         return DNSResolveResult { prefix: totalBits, record: null };
     }
 

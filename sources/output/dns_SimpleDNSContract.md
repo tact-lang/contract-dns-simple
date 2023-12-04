@@ -1,9 +1,9 @@
 # TACT Compilation Report
 Contract: SimpleDNSContract
-BOC Size: 2523 bytes
+BOC Size: 2573 bytes
 
 # Types
-Total Types: 14
+Total Types: 19
 
 ## StateInit
 TLB: `_ code:^cell data:^cell = StateInit`
@@ -25,9 +25,17 @@ Signature: `Deploy{queryId:uint64}`
 TLB: `deploy_ok#aff90f57 queryId:uint64 = DeployOk`
 Signature: `DeployOk{queryId:uint64}`
 
+## FactoryDeploy
+TLB: `factory_deploy#6d0ff13b queryId:uint64 cashback:address = FactoryDeploy`
+Signature: `FactoryDeploy{queryId:uint64,cashback:address}`
+
 ## ChangeOwner
-TLB: `change_owner#0f474d03 newOwner:address = ChangeOwner`
-Signature: `ChangeOwner{newOwner:address}`
+TLB: `change_owner#819dbe99 queryId:uint64 newOwner:address = ChangeOwner`
+Signature: `ChangeOwner{queryId:uint64,newOwner:address}`
+
+## ChangeOwnerOk
+TLB: `change_owner_ok#327b2b4a queryId:uint64 newOwner:address = ChangeOwnerOk`
+Signature: `ChangeOwnerOk{queryId:uint64,newOwner:address}`
 
 ## DNSResolveResult
 TLB: `_ prefix:int257 record:Maybe ^cell = DNSResolveResult`
@@ -36,6 +44,10 @@ Signature: `DNSResolveResult{prefix:int257,record:Maybe ^cell}`
 ## UpdateRecord
 TLB: `update_record#d294b726 domain:^string category:int257 record:Maybe ^cell = UpdateRecord`
 Signature: `UpdateRecord{domain:^string,category:int257,record:Maybe ^cell}`
+
+## UpdateSubdomain
+TLB: `update_subdomain#5c3678fd domain:^string address:Maybe address = UpdateSubdomain`
+Signature: `UpdateSubdomain{domain:^string,address:Maybe address}`
 
 ## EventPermissionsUpdated
 TLB: `event_permissions_updated#6cd59be6 permissions:Permissions{canAdd:bool,canRemove:bool,canReplace:bool} = EventPermissionsUpdated`
@@ -52,6 +64,14 @@ Signature: `EventRecordUpdated{domain:^string,category:int257,oldRecord:^cell,ne
 ## EventRecordRemoved
 TLB: `event_record_removed#ff9494f1 domain:^string category:int257 = EventRecordRemoved`
 Signature: `EventRecordRemoved{domain:^string,category:int257}`
+
+## EventSubdomainAdded
+TLB: `event_subdomain_added#ff1b3b14 domain:^string address:address = EventSubdomainAdded`
+Signature: `EventSubdomainAdded{domain:^string,address:address}`
+
+## EventSubdomainRemoved
+TLB: `event_subdomain_removed#b5f1b4b5 domain:^string = EventSubdomainRemoved`
+Signature: `EventSubdomainRemoved{domain:^string}`
 
 ## DNSRecord
 TLB: `_ name:^string categories:dict<int, ^cell> = DNSRecord`

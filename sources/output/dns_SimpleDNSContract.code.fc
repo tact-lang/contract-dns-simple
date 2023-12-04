@@ -1,3 +1,7 @@
+#pragma version =0.4.3;
+#pragma allow-post-modification;
+#pragma compute-asm-ltr;
+
 #include "dns_SimpleDNSContract.headers.fc";
 #include "dns_SimpleDNSContract.stdlib.fc";
 #include "dns_SimpleDNSContract.native.fc";
@@ -119,21 +123,21 @@ cell $global_dnsResolveNext(slice $address) impure inline_ref {
             $domain'categories~__tact_dict_set_int_cell(257, $update'category, null());
             $self'records~__tact_dict_set_int_cell(257, $id, $DNSRecord$_store_cell(($domain'name, $domain'categories)));
             $global_emit($EventRecordRemoved$_store_cell($EventRecordRemoved$_constructor_domain_category($update'domain, $update'category)));
-            $global_reply(__gen_cell_comment_1ab7258672dca9e71092c9759afa23c5743ea96b7212e9ed31508e451b4e6c7c());
+            ($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains)~$SimpleDNSContract$_fun_reply(__gen_cell_comment_1ab7258672dca9e71092c9759afa23c5743ea96b7212e9ed31508e451b4e6c7c());
             return (($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains), ());
         }
         if (( ((~ null?($cat))) ? ((~ null?($update'record))) : (false) )) {
             throw_unless(55590, $self'permissions'canReplace);
             $domain'categories~__tact_dict_set_int_cell(257, $update'category, $update'record);
             $self'records~__tact_dict_set_int_cell(257, $id, $DNSRecord$_store_cell(($domain'name, $domain'categories)));
-            $global_reply(__gen_cell_comment_93615a4f633eb95bc391b421a4694a94cf8391417a34aefe0d52b7614a81e4f5());
+            ($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains)~$SimpleDNSContract$_fun_reply(__gen_cell_comment_93615a4f633eb95bc391b421a4694a94cf8391417a34aefe0d52b7614a81e4f5());
             return (($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains), ());
         }
         if (( (null?($cat)) ? ((~ null?($update'record))) : (false) )) {
             throw_unless(43961, $self'permissions'canAdd);
             $domain'categories~__tact_dict_set_int_cell(257, $update'category, $update'record);
             $self'records~__tact_dict_set_int_cell(257, $id, $DNSRecord$_store_cell(($domain'name, $domain'categories)));
-            $global_reply(__gen_cell_comment_73fa0cbcd099db2dd76262f844399543aa2f401a4e5d4e5901cfebfff2b93426());
+            ($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains)~$SimpleDNSContract$_fun_reply(__gen_cell_comment_73fa0cbcd099db2dd76262f844399543aa2f401a4e5d4e5901cfebfff2b93426());
             return (($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains), ());
         }
     } else {
@@ -142,11 +146,11 @@ cell $global_dnsResolveNext(slice $address) impure inline_ref {
             var ($domain'name, $domain'categories) = $DNSRecord$_constructor_name_categories($update'domain, null());
             $domain'categories~__tact_dict_set_int_cell(257, $update'category, $update'record);
             $self'records~__tact_dict_set_int_cell(257, $id, $DNSRecord$_store_cell(($domain'name, $domain'categories)));
-            $global_reply(__gen_cell_comment_73fa0cbcd099db2dd76262f844399543aa2f401a4e5d4e5901cfebfff2b93426());
+            ($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains)~$SimpleDNSContract$_fun_reply(__gen_cell_comment_73fa0cbcd099db2dd76262f844399543aa2f401a4e5d4e5901cfebfff2b93426());
             return (($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains), ());
         }
     }
-    $global_reply(__gen_cell_comment_3ada442f0ca264aa58d8810f2538bce82f16b8ded591e292cf4d43708a0b2539());
+    ($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains)~$SimpleDNSContract$_fun_reply(__gen_cell_comment_3ada442f0ca264aa58d8810f2538bce82f16b8ded591e292cf4d43708a0b2539());
     return (($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains), ());
 }
 
@@ -155,7 +159,7 @@ cell $global_dnsResolveNext(slice $address) impure inline_ref {
     ($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains)~$SimpleDNSContract$_fun_requireOwner();
     throw_unless(26438, $self'permissions'canAdd);
     $self'permissions'canAdd = false;
-    $global_reply(__gen_cell_comment_a86c9da7c8b62db15fe2555250af1e9d604cd5acc630b4764245b58173493dfb());
+    ($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains)~$SimpleDNSContract$_fun_reply(__gen_cell_comment_a86c9da7c8b62db15fe2555250af1e9d604cd5acc630b4764245b58173493dfb());
     return (($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains), ());
 }
 
@@ -164,7 +168,7 @@ cell $global_dnsResolveNext(slice $address) impure inline_ref {
     ($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains)~$SimpleDNSContract$_fun_requireOwner();
     throw_unless(26438, $self'permissions'canRemove);
     $self'permissions'canRemove = false;
-    $global_reply(__gen_cell_comment_a86c9da7c8b62db15fe2555250af1e9d604cd5acc630b4764245b58173493dfb());
+    ($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains)~$SimpleDNSContract$_fun_reply(__gen_cell_comment_a86c9da7c8b62db15fe2555250af1e9d604cd5acc630b4764245b58173493dfb());
     return (($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains), ());
 }
 
@@ -173,22 +177,23 @@ cell $global_dnsResolveNext(slice $address) impure inline_ref {
     ($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains)~$SimpleDNSContract$_fun_requireOwner();
     throw_unless(26438, $self'permissions'canReplace);
     $self'permissions'canReplace = false;
-    $global_reply(__gen_cell_comment_a86c9da7c8b62db15fe2555250af1e9d604cd5acc630b4764245b58173493dfb());
+    ($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains)~$SimpleDNSContract$_fun_reply(__gen_cell_comment_a86c9da7c8b62db15fe2555250af1e9d604cd5acc630b4764245b58173493dfb());
     return (($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains), ());
 }
 
 (((slice, (int, int, int), cell, cell)), ()) $SimpleDNSContract$_internal_binary_Deploy((slice, (int, int, int), cell, cell) $self, (int) $deploy) impure inline {
     var ($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains) = $self;
     var ($deploy'queryId) = $deploy;
-    $global_reply($DeployOk$_store_cell($DeployOk$_constructor_queryId($deploy'queryId)));
+    ($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains)~$SimpleDNSContract$_fun_notify($DeployOk$_store_cell($DeployOk$_constructor_queryId($deploy'queryId)));
     return (($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains), ());
 }
 
-(((slice, (int, int, int), cell, cell)), ()) $SimpleDNSContract$_internal_binary_ChangeOwner((slice, (int, int, int), cell, cell) $self, (slice) $msg) impure inline {
+(((slice, (int, int, int), cell, cell)), ()) $SimpleDNSContract$_internal_binary_ChangeOwner((slice, (int, int, int), cell, cell) $self, (int, slice) $msg) impure inline {
     var ($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains) = $self;
-    var ($msg'newOwner) = $msg;
+    var ($msg'queryId, $msg'newOwner) = $msg;
     ($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains)~$SimpleDNSContract$_fun_requireOwner();
     $self'owner = $msg'newOwner;
+    ($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains)~$SimpleDNSContract$_fun_reply($ChangeOwnerOk$_store_cell($ChangeOwnerOk$_constructor_queryId_newOwner($msg'queryId, $msg'newOwner)));
     return (($self'owner, ($self'permissions'canAdd, $self'permissions'canRemove, $self'permissions'canReplace), $self'records, $self'subdomains), ());
 }
 
@@ -228,13 +233,13 @@ _ supported_interfaces() method_id {
         "org.ton.abi.ipfs.v0"H >> 128,
         "org.ton.deploy.lazy.v0"H >> 128,
         "org.ton.chain.workchain.v0"H >> 128,
-        "org.ton.ownable.transferable"H >> 128,
+        "org.ton.ownable.transferable.v2"H >> 128,
         "org.ton.ownable"H >> 128
     );
 }
 
 _ get_abi_ipfs() method_id {
-    return "ipfs://QmR3aQojC6G5cv47a7SwjCeXShixypEKCjScucEZ3A6BhK";
+    return "ipfs://QmNrYC61XCrGgTPFut89izfwsR8h5NJVRpLBzuJL7xVhGp";
 }
 
 _ lazy_deployment_completed() method_id {
@@ -246,6 +251,10 @@ _ lazy_deployment_completed() method_id {
 ;;
 
 ((slice, (int, int, int), cell, cell), int) $SimpleDNSContract$_contract_router_internal((slice, (int, int, int), cell, cell) self, int msg_bounced, slice in_msg) impure inline_ref {
+    ;; Handle bounced messages
+    if (msg_bounced) {
+        return (self, true);
+    }
     
     ;; Parse incoming message
     int op = 0;
@@ -253,10 +262,6 @@ _ lazy_deployment_completed() method_id {
         op = in_msg.preload_uint(32);
     }
     
-    ;; Handle bounced messages
-    if (msg_bounced) {
-        return (self, true);
-    }
     
     ;; Receive UpdateRecord message
     if (op == 3532961574) {
@@ -273,7 +278,7 @@ _ lazy_deployment_completed() method_id {
     }
     
     ;; Receive ChangeOwner message
-    if (op == 256331011) {
+    if (op == 2174598809) {
         var msg = in_msg~$ChangeOwner$_load();
         self~$SimpleDNSContract$_internal_binary_ChangeOwner(msg);
         return (self, true);
@@ -322,7 +327,7 @@ _ lazy_deployment_completed() method_id {
     int handled = self~$SimpleDNSContract$_contract_router_internal(msg_bounced, in_msg);
     
     ;; Throw if not handled
-    throw_unless(handled, 130);
+    throw_unless(130, handled);
     
     ;; Persist state
     $SimpleDNSContract$_contract_store(self);

@@ -659,10 +659,10 @@
   dependencies:
     "@sinonjs/commons" "^2.0.0"
 
-"@tact-lang/compiler@^1.1.0-beta.15":
-  version "1.1.0-beta.15"
-  resolved "https://registry.yarnpkg.com/@tact-lang/compiler/-/compiler-1.1.0-beta.15.tgz#296a8b412b7cb04896dfecaba8281a6688e6e0bc"
-  integrity sha512-TXsSOXtrfypwBax1vxRc+Wbfe181fgiIbqjIeK9GREo89n2VO0e/35ZSP/4TWoNORaeDwc9e3VsaOYeduAS0iA==
+"@tact-lang/compiler@^1.1.3":
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/@tact-lang/compiler/-/compiler-1.1.3.tgz#ecc599427b307cea4e9a7eb26d89e12fffd49a41"
+  integrity sha512-2UnHMW4S1+Rb5hUQAkNZWnQ8XJV4wRq+z3gAjchOzFiZEFNzE/46aIp7E1Jx+dFkfckdWXtGqHbhkRw6rc4CfQ==
   dependencies:
     "@ipld/dag-pb" "2.1.18"
     "@tact-lang/opcode" "^0.0.13"
@@ -680,12 +680,12 @@
     ton-crypto "^3.2.0"
     zod "^3.20.2"
 
-"@tact-lang/coverage@^0.0.6":
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/@tact-lang/coverage/-/coverage-0.0.6.tgz#d4fff38a7a1f633b24c09c26a2cd79bb8966ec9e"
-  integrity sha512-oo/fg02/Z6Ly2G3Ml4bm7jl0nzxFO+/01vbhgPUlODJgIHPRz0EAx9Qx/nMjLVDdcvqT5feyrTx1fIBUVZwNUw==
+"@tact-lang/coverage@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@tact-lang/coverage/-/coverage-0.0.5.tgz#8da0d25f2a48638712fe746bfd05491d14773afa"
+  integrity sha512-1vWP2DyXDTMFrThdX+oYCHus+7FpAYTF2Jx0zEfHMJi0g6QL/4zCOkouEBFrvueOtsOiTQKGR+IFgUcNzXjnFw==
   dependencies:
-    "@tact-lang/opcode" "^0.0.13"
+    "@tact-lang/opcode" "^0.0.12"
     glob "^9.3.2"
     prando "^6.0.1"
     teslabot "^1.5.0"
@@ -708,6 +708,11 @@
     prando "^6.0.1"
     teslabot "^1.5.0"
     zod "^3.20.2"
+
+"@tact-lang/opcode@^0.0.12":
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/@tact-lang/opcode/-/opcode-0.0.12.tgz#a186dc6ffaac91da39bdbf55dc28bd330be7a26b"
+  integrity sha512-iSLoENXb5KlD15d2XaH8omhSZFlmoF/uRMpblggnlt9WLxogCDNkMODyNS1EijhkhzBlAzXZIByFvWTLZda3bQ==
 
 "@tact-lang/opcode@^0.0.13":
   version "0.0.13"
